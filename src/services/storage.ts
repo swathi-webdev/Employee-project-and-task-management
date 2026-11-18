@@ -62,7 +62,18 @@ export const storage = {
         localStorage.setItem(KEYS.PROJECTS, JSON.stringify(INITIAL_PROJECTS));
         return INITIAL_PROJECTS;
       }
-      return JSON.parse(stored);
+      const parsed: Project[] = JSON.parse(stored);
+      let migrated = false;
+      const updated = parsed.map(p => {
+        if (p.id === 'PRJ-1') { migrated = true; return { ...p, id: 'PRJ-20261118-001' }; }
+        if (p.id === 'PRJ-2') { migrated = true; return { ...p, id: 'PRJ-20261118-002' }; }
+        if (p.id === 'PRJ-3') { migrated = true; return { ...p, id: 'PRJ-20261118-003' }; }
+        return p;
+      });
+      if (migrated) {
+        localStorage.setItem(KEYS.PROJECTS, JSON.stringify(updated));
+      }
+      return updated;
     } catch (e) {
       console.error('Failed to load projects from localStorage', e);
       return INITIAL_PROJECTS;
@@ -80,7 +91,18 @@ export const storage = {
         localStorage.setItem(KEYS.TASKS, JSON.stringify(INITIAL_TASKS));
         return INITIAL_TASKS;
       }
-      return JSON.parse(stored);
+      const parsed: Task[] = JSON.parse(stored);
+      let migrated = false;
+      const updated = parsed.map(t => {
+        if (t.projectId === 'PRJ-1') { migrated = true; return { ...t, projectId: 'PRJ-20261118-001' }; }
+        if (t.projectId === 'PRJ-2') { migrated = true; return { ...t, projectId: 'PRJ-20261118-002' }; }
+        if (t.projectId === 'PRJ-3') { migrated = true; return { ...t, projectId: 'PRJ-20261118-003' }; }
+        return t;
+      });
+      if (migrated) {
+        localStorage.setItem(KEYS.TASKS, JSON.stringify(updated));
+      }
+      return updated;
     } catch (e) {
       console.error('Failed to load tasks from localStorage', e);
       return INITIAL_TASKS;

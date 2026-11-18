@@ -148,8 +148,13 @@ export const ProjectListPage: React.FC = () => {
       sortable: true,
       render: p => (
         <div>
-          <div className="font-bold text-slate-900 hover:text-brand-600 transition-colors">
-            {p.name}
+          <div className="flex items-center gap-1.5">
+            <span className="font-mono text-[10px] font-bold text-brand-700 bg-brand-50 border border-brand-200/80 px-1.5 py-0.2 rounded">
+              {p.id}
+            </span>
+            <span className="font-bold text-slate-900 hover:text-brand-600 transition-colors">
+              {p.name}
+            </span>
           </div>
           <div className="text-xs text-slate-400 line-clamp-1">{p.description}</div>
         </div>

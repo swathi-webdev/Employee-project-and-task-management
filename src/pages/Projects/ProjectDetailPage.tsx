@@ -134,7 +134,7 @@ export const ProjectDetailPage: React.FC = () => {
             <div>
               <div className="flex items-center gap-2.5">
                 <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 border border-brand-200/80 px-2 py-0.5 rounded">
-                  Project {project.id.replace(/^PRJ-?/i, '')}
+                  {project.id}
                 </span>
                 <h1 className="text-xl font-bold text-slate-900 tracking-tight">{project.name}</h1>
               </div>

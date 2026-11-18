@@ -175,7 +175,7 @@ export const INITIAL_EMPLOYEES: Employee[] = [
 
 export const INITIAL_PROJECTS: Project[] = [
   {
-    id: 'PRJ-1',
+    id: 'PRJ-20261118-001',
     name: 'Personal productivity dashboard',
     description: `• Designed a fully responsive single-page application using React JS and Bootstrap, implementing reusable functional components and React Hooks (useState, useEffect) to manage complex UI state across task management and analytics modules.
 • Built an interactive task tracking system with CRUD operations, real-time state updates, and dynamic data visualizations, enabling users to monitor productivity metrics at a glance.
@@ -190,7 +190,7 @@ export const INITIAL_PROJECTS: Project[] = [
     updatedAt: '2026-11-18T22:30:00Z',
   },
   {
-    id: 'PRJ-2',
+    id: 'PRJ-20261118-002',
     name: 'E-commerce Website',
     description: `• Designed and developed a responsive e-commerce platform using React JS and Tailwind CSS.
 • Implemented product listings, category filters, shopping cart functionality and product detail pages.
@@ -205,7 +205,7 @@ export const INITIAL_PROJECTS: Project[] = [
     updatedAt: '2026-11-18T23:00:00Z',
   },
   {
-    id: 'PRJ-3',
+    id: 'PRJ-20261118-003',
     name: 'Textile Website',
     description: `• Developed a modern textile business website concept using React JS and Tailwind CSS to showcase textile products and collections.
 • Designed responsive product galleries, category sections and product detail layouts for different fabric collections.
@@ -226,7 +226,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1001',
     title: 'design figma ui',
     description: 'Design Figma UI components, interactive prototypes, and design tokens for the personal productivity dashboard.',
-    projectId: 'PRJ-1',
+    projectId: 'PRJ-20261118-001',
     assignedEmployeeId: 'EMP-1010',
     priority: 'Medium',
     status: 'To Do',
@@ -249,7 +249,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1002',
     title: 'Design Figma UI',
     description: 'Design comprehensive Figma UI for the e-commerce storefront, product catalog, cart drawer, and responsive layouts.',
-    projectId: 'PRJ-2',
+    projectId: 'PRJ-20261118-002',
     assignedEmployeeId: 'EMP-1010',
     priority: 'High',
     status: 'Completed',
@@ -271,7 +271,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1003',
     title: 'Develop product listing page',
     description: 'Implement dynamic product grid, sorting, multi-attribute filter facet sidebar, and search functionality.',
-    projectId: 'PRJ-2',
+    projectId: 'PRJ-20261118-002',
     assignedEmployeeId: 'EMP-1002',
     priority: 'High',
     status: 'In Progress',
@@ -293,7 +293,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1004',
     title: 'Implement shopping cart',
     description: 'Build interactive shopping cart with item quantity updates, persistent LocalStorage state, subtotal and tax calculation.',
-    projectId: 'PRJ-2',
+    projectId: 'PRJ-20261118-002',
     assignedEmployeeId: 'EMP-1001',
     priority: 'Medium',
     status: 'To Do',
@@ -315,7 +315,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1005',
     title: 'Build product details page',
     description: 'Create rich product detail view featuring image carousel gallery, variant selector, specs table, and reviews.',
-    projectId: 'PRJ-2',
+    projectId: 'PRJ-20261118-002',
     assignedEmployeeId: 'EMP-1003',
     priority: 'Medium',
     status: 'To Do',
@@ -337,7 +337,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1006',
     title: 'Develop checkout UI',
     description: 'Implement multi-step checkout workflow: shipping address, payment method selection, order review, and confirmation.',
-    projectId: 'PRJ-2',
+    projectId: 'PRJ-20261118-002',
     assignedEmployeeId: 'EMP-1001',
     priority: 'High',
     status: 'To Do',
@@ -361,7 +361,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1007',
     title: 'Create textile website Figma design',
     description: 'Design high-fidelity mockups for textile fabric collections, lookbook presentation, and inquiry forms.',
-    projectId: 'PRJ-3',
+    projectId: 'PRJ-20261118-003',
     assignedEmployeeId: 'EMP-1010',
     priority: 'High',
     status: 'Completed',
@@ -383,7 +383,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1008',
     title: 'Develop homepage and navigation',
     description: 'Build hero banner showcasing premium textile fabrics, sticky modern header, featured categories, and brand story.',
-    projectId: 'PRJ-3',
+    projectId: 'PRJ-20261118-003',
     assignedEmployeeId: 'EMP-1002',
     priority: 'High',
     status: 'To Do',
@@ -405,7 +405,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1009',
     title: 'Create fabric category pages',
     description: 'Build category overview with fabric weave filters (cotton, silk, linen, polyester), GSM specs, and color options.',
-    projectId: 'PRJ-3',
+    projectId: 'PRJ-20261118-003',
     assignedEmployeeId: 'EMP-1003',
     priority: 'Medium',
     status: 'To Do',
@@ -427,7 +427,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1010',
     title: 'Design product gallery',
     description: 'Develop high-resolution interactive fabric zoom gallery, texture swatch previewer, and lookbook view.',
-    projectId: 'PRJ-3',
+    projectId: 'PRJ-20261118-003',
     assignedEmployeeId: 'EMP-1001',
     priority: 'Medium',
     status: 'To Do',
@@ -449,7 +449,7 @@ export const INITIAL_TASKS: Task[] = [
     id: 'TSK-1011',
     title: 'Implement enquiry form',
     description: 'Create wholesale and custom fabric order enquiry form with swatch request option, validation, and auto-responder.',
-    projectId: 'PRJ-3',
+    projectId: 'PRJ-20261118-003',
     assignedEmployeeId: 'EMP-1002',
     priority: 'High',
     status: 'To Do',

@@ -193,15 +193,29 @@ export const generateNextEmployeeId = (existingEmployees: Employee[]): string =>
 };
 
 export const generateNextProjectId = (existingProjects: { id: string }[]): string => {
-  let maxNum = 0;
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const prefix = `PRJ-${yyyy}${mm}${dd}-`;
+
+  let maxSeq = 0;
   existingProjects.forEach(prj => {
-    const match = prj.id.match(/^PRJ-(\d+)$/i);
-    if (match) {
-      const num = parseInt(match[1], 10);
-      if (num > maxNum) maxNum = num;
+    if (prj.id.startsWith(prefix)) {
+      const seqStr = prj.id.slice(prefix.length);
+      const seq = parseInt(seqStr, 10);
+      if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+    } else {
+      const match = prj.id.match(/(\d+)$/);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (num > maxSeq && num < 1000) maxSeq = num;
+      }
     }
   });
-  return `PRJ-${maxNum + 1}`;
+
+  const nextSeq = String(maxSeq + 1).padStart(3, '0');
+  return `${prefix}${nextSeq}`;
 };
 
 export const generateNextTaskId = (existingTasks: Task[]): string => {
