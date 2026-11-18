@@ -17,7 +17,7 @@ A responsive, single-user enterprise application built with **React 19**, **Type
 | **Lucide React** | Clean, lightweight SVG vector icons used throughout the interface, navigation, and badges. |
 | **date-fns** | Utility library for formatting dates, calculating timeline milestones, checking overdue tasks, and tracking sprint deadlines. |
 | **Web Notification API** | Browser-native desktop alerts allowing the system to send OS notifications outside the browser window. |
-| **Vitest & Testing Library** | Unit testing suite verifying form validators, date consistency, and strict business rule enforcement. |
+| **Testing Library** | Unit testing suite verifying form validators, date consistency, and strict business rule enforcement. |
 
 ---
 
