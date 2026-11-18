@@ -14,9 +14,6 @@ interface AppContextType {
   settings: AppSettings;
   apiConfig: ApiConfig;
   notifications: AppNotification[];
-  currentUserId: string;
-  currentUser: Employee | undefined;
-  setCurrentUserId: (id: string) => void;
   // Getters
   getEmployeeById: (id: string) => Employee | undefined;
   getProjectById: (id: string) => Project | undefined;
@@ -64,17 +61,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [settings, setSettings] = useState<AppSettings>(storage.getSettings());
   const [apiConfig, setApiConfig] = useState<ApiConfig>(storage.getApiConfig());
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [currentUserId, setCurrentUserIdState] = useState<string>(storage.getCurrentUserId());
-
-  const setCurrentUserId = useCallback((id: string) => {
-    storage.saveCurrentUserId(id);
-    setCurrentUserIdState(id);
-  }, []);
-
-  const currentUser = React.useMemo(() => {
-    if (employees.length === 0) return undefined;
-    return employees.find(e => e.id === currentUserId) || employees.find(e => e.status === 'Active') || employees[0];
-  }, [employees, currentUserId]);
 
   // Initial load
   const loadData = useCallback(async () => {
@@ -355,7 +341,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // 1. Optimistically update local state immediately
     const now = new Date().toISOString();
-    const actorName = currentUser ? currentUser.name : 'System User';
+    const actorName = 'Administrator';
 
     setTasks(prev =>
       prev.map(t =>
@@ -428,17 +414,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const task = tasks.find(t => t.id === taskId);
     if (!task || !content.trim()) return;
 
-    const author = currentUser || {
-      id: 'USER-1',
-      name: 'User',
-      avatar: '',
-    };
-
     const newComment = {
       id: `comm-${Date.now()}`,
-      authorId: author.id,
-      authorName: author.name,
-      authorAvatar: author.avatar || '',
+      authorId: 'ADMIN',
+      authorName: 'Administrator',
+      authorAvatar: '',
       content: content.trim(),
       createdAt: new Date().toISOString(),
     };
@@ -447,7 +427,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `act-${Date.now()}`,
       timestamp: new Date().toISOString(),
       action: 'Added a comment',
-      user: author.name,
+      user: 'Administrator',
     };
 
     await updateTask(taskId, {
@@ -498,9 +478,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         settings,
         apiConfig,
         notifications,
-        currentUserId,
-        currentUser,
-        setCurrentUserId,
         getEmployeeById,
         getProjectById,
         getTaskById,

@@ -31,13 +31,10 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
     employees,
     projects,
     tasks,
-    currentUser,
-    setCurrentUserId,
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showSwitchUser, setShowSwitchUser] = useState(false);
   const [globalSearch, setGlobalSearch] = useState('');
   const [searchDropdownOpen, setSearchDropdownOpen] = useState(false);
 
@@ -97,15 +94,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
-
-  const activeUser = currentUser || employees[0] || {
-    id: 'EMP-DEFAULT',
-    name: 'Current User',
-    designation: 'Staff',
-    email: 'user@company.com',
-    avatar: '',
-    status: 'Active' as const,
-  };
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between">
@@ -432,83 +420,37 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         {/* Divider */}
         <div className="h-6 w-px bg-slate-200" />
 
-        {/* User profile menu */}
+        {/* Single User Profile Menu */}
         <div className="relative" ref={userRef}>
           <button
             onClick={() => setShowUserMenu(prev => !prev)}
-            className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-100 transition-colors"
+            className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-slate-100 transition-colors"
           >
-            <Avatar
-              name={activeUser.name}
-              src={activeUser.avatar}
-              size="sm"
-              status={activeUser.status}
-            />
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-2 ring-white">
+              AD
+            </div>
             <div className="hidden sm:block text-left">
               <div className="text-xs font-bold text-slate-800 leading-tight">
-                {activeUser.name}
+                Administrator
               </div>
               <div className="text-[10px] text-slate-400 font-medium">
-                {activeUser.designation}
+                System Admin
               </div>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-              <div className="px-3 py-2 border-b border-slate-100">
-                <div className="text-xs font-bold text-slate-900">{activeUser.name}</div>
-                <div className="text-[11px] text-slate-400">{activeUser.email}</div>
-                <div className="text-[10px] font-semibold text-brand-600 bg-brand-50 inline-block px-1.5 py-0.2 rounded mt-1">
-                  Active Session ({activeUser.id})
+            <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+              <div className="px-3 py-2.5 border-b border-slate-100">
+                <div className="text-xs font-bold text-slate-900">Administrator</div>
+                <div className="text-[11px] text-slate-400">admin@ems.local</div>
+                <div className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 inline-block px-1.5 py-0.2 rounded mt-1.5">
+                  Single User Mode
                 </div>
               </div>
 
               <div className="py-1">
-                <button
-                  onClick={() => {
-                    navigate(`/employees/${activeUser.id}`);
-                    setShowUserMenu(false);
-                  }}
-                  className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
-                >
-                  <User className="w-3.5 h-3.5 text-slate-400" />
-                  View My Profile
-                </button>
-
-                <button
-                  onClick={() => setShowSwitchUser(!showSwitchUser)}
-                  className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center justify-between"
-                >
-                  <span className="flex items-center gap-2">
-                    <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
-                    Switch User
-                  </span>
-                  <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform ${showSwitchUser ? 'rotate-180' : ''}`} />
-                </button>
-
-                {showSwitchUser && (
-                  <div className="max-h-40 overflow-y-auto px-2 py-1 space-y-1 bg-slate-50 rounded-lg my-1 border border-slate-100">
-                    {employees.filter(e => e.status === 'Active').map(emp => (
-                      <button
-                        key={emp.id}
-                        onClick={() => {
-                          setCurrentUserId(emp.id);
-                          setShowSwitchUser(false);
-                          setShowUserMenu(false);
-                        }}
-                        className={`w-full text-left p-1.5 rounded text-xs flex items-center gap-2 transition-colors ${
-                          emp.id === activeUser.id ? 'bg-brand-100 text-brand-900 font-bold' : 'hover:bg-white text-slate-700'
-                        }`}
-                      >
-                        <Avatar name={emp.name} src={emp.avatar} size="xs" />
-                        <span className="truncate flex-1">{emp.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
                 <button
                   onClick={() => {
                     navigate('/settings');
@@ -517,20 +459,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
                   className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
                 >
                   <Shield className="w-3.5 h-3.5 text-slate-400" />
-                  Settings & Simulator
-                </button>
-              </div>
-
-              <div className="pt-1 border-t border-slate-100">
-                <button
-                  onClick={() => {
-                    setShowUserMenu(false);
-                    navigate('/settings');
-                  }}
-                  className="w-full text-left px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-lg flex items-center gap-2"
-                >
-                  <LogOut className="w-3.5 h-3.5 text-rose-500" />
-                  Reset Demo Session
+                  Workspace Settings
                 </button>
               </div>
             </div>

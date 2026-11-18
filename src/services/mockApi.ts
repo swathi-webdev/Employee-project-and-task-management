@@ -34,7 +34,7 @@ export const api = {
   },
 
   async createEmployee(employeeData: Omit<Employee, 'createdAt' | 'updatedAt'>): Promise<Employee> {
-    await simulateNetwork();
+    await simulateNetwork(); 
     const employees = storage.getEmployees();
 
     const errors = validateEmployeeForm(employeeData, employees, false);
