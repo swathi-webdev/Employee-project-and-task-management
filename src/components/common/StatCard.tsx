@@ -11,6 +11,7 @@ interface StatCardProps {
     value: string;
     positive: boolean;
   };
+  onClick?: () => void;
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -20,6 +21,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   icon: Icon,
   color = 'indigo',
   trend,
+  onClick,
 }) => {
   const colorMap = {
     blue: {
@@ -57,7 +59,12 @@ export const StatCard: React.FC<StatCardProps> = ({
   const theme = colorMap[color];
 
   return (
-    <div className={`group bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between ${theme.ring}`}>
+    <div
+      onClick={onClick}
+      className={`group bg-white rounded-xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between ${
+        onClick ? 'cursor-pointer hover:-translate-y-0.5 active:translate-y-0' : ''
+      } ${theme.ring}`}
+    >
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
           {title}

@@ -346,6 +346,52 @@ export const ProjectListPage: React.FC = () => {
             onChange={val => updateFilters('priority', val)}
           />
         </div>
+
+        {/* Active Filter Chips */}
+        {(search || statusFilter || priorityFilter) && (
+          <div className="flex flex-wrap items-center gap-2 pt-3 mt-3 border-t border-slate-100 text-xs text-slate-500">
+            <span className="text-[11px] font-semibold text-slate-400">Active Filters:</span>
+            {search && (
+              <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full text-slate-700">
+                Search: "{search}"
+                <button
+                  onClick={() => updateFilters('search', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {statusFilter && (
+              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+                Status: {statusFilter}
+                <button
+                  onClick={() => updateFilters('status', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {priorityFilter && (
+              <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+                Priority: {priorityFilter}
+                <button
+                  onClick={() => updateFilters('priority', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            <button
+              onClick={() => setSearchParams({})}
+              className="text-brand-600 hover:text-brand-800 font-semibold underline text-[11px] ml-1"
+            >
+              Reset all
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Projects Display: Grid or Table */}

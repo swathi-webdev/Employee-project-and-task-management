@@ -71,15 +71,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         }`}
       >
         {/* Brand Header */}
-        <div className="h-16 px-6 flex items-center justify-between border-b border-slate-800/80">
+        <div className="h-16 px-5 flex items-center justify-between border-b border-slate-800/80 bg-navy-950/40">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-blue-500 flex items-center justify-center text-white shadow-md shadow-brand-500/25 ring-1 ring-white/15">
               <Layers className="w-5 h-5" />
             </div>
-            <div>
-              <span className="font-bold text-white tracking-tight text-base">ApexCore</span>
-              <span className="block text-[10px] text-brand-400 font-semibold tracking-wider uppercase">
-                Enterprise SaaS
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="font-extrabold text-white tracking-tight text-sm truncate">
+                  EMS
+                </span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded bg-brand-500/20 text-brand-300 font-semibold border border-brand-500/30">
+                  Pro
+                </span>
+              </div>
+              <span className="block text-[11px] text-slate-400 font-medium truncate">
+                Employee Management System
               </span>
             </div>
           </div>

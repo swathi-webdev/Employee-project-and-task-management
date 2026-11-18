@@ -110,6 +110,7 @@ export const DashboardPage: React.FC = () => {
           subtitle="All departments"
           icon={Users}
           color="blue"
+          onClick={() => navigate('/employees')}
         />
         <StatCard
           title="Active Staff"
@@ -117,6 +118,7 @@ export const DashboardPage: React.FC = () => {
           subtitle={`${Math.round((activeEmployees / (totalEmployees || 1)) * 100)}% available`}
           icon={UserCheck}
           color="emerald"
+          onClick={() => navigate('/employees?status=Active')}
         />
         <StatCard
           title="Projects"
@@ -124,6 +126,7 @@ export const DashboardPage: React.FC = () => {
           subtitle="Portfolio total"
           icon={Briefcase}
           color="indigo"
+          onClick={() => navigate('/projects')}
         />
         <StatCard
           title="In Progress"
@@ -131,6 +134,7 @@ export const DashboardPage: React.FC = () => {
           subtitle="Active delivery"
           icon={Layers}
           color="purple"
+          onClick={() => navigate('/projects?status=In Progress')}
         />
         <StatCard
           title="Total Tasks"
@@ -138,6 +142,7 @@ export const DashboardPage: React.FC = () => {
           subtitle="Across sprints"
           icon={CheckSquare}
           color="amber"
+          onClick={() => navigate('/tasks')}
         />
         <StatCard
           title="Completed"
@@ -145,6 +150,7 @@ export const DashboardPage: React.FC = () => {
           subtitle={`${Math.round((completedTasks / (totalTasks || 1)) * 100)}% done`}
           icon={CheckCircle2}
           color="emerald"
+          onClick={() => navigate('/tasks?status=Completed')}
         />
       </div>
 

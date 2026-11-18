@@ -402,6 +402,63 @@ export const EmployeeListPage: React.FC = () => {
           />
         </div>
 
+        {/* Active Filter Chips */}
+        {(search || departmentFilter || designationFilter || statusFilter) && (
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs text-slate-500">
+            <span className="text-[11px] font-semibold text-slate-400">Active Filters:</span>
+            {search && (
+              <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full text-slate-700">
+                Search: "{search}"
+                <button
+                  onClick={() => updateFilters('search', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {departmentFilter && (
+              <span className="inline-flex items-center gap-1 bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full font-medium">
+                Dept: {departmentFilter}
+                <button
+                  onClick={() => updateFilters('department', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {designationFilter && (
+              <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-medium">
+                Role: {designationFilter}
+                <button
+                  onClick={() => updateFilters('designation', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {statusFilter && (
+              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+                Status: {statusFilter}
+                <button
+                  onClick={() => updateFilters('status', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            <button
+              onClick={() => setSearchParams({})}
+              className="text-brand-600 hover:text-brand-800 font-semibold underline text-[11px] ml-1"
+            >
+              Reset all
+            </button>
+          </div>
+        )}
+
         {/* Bulk Action Controls Bar (visible when items selected) */}
         {selectedIds.length > 0 && (
           <div className="flex items-center justify-between p-2.5 bg-brand-50 border border-brand-200 rounded-xl text-xs text-brand-900 animate-in fade-in duration-150">

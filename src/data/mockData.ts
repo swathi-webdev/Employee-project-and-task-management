@@ -3,9 +3,9 @@ import { Employee, Project, Task } from '../types';
 export const INITIAL_EMPLOYEES: Employee[] = [
   {
     id: 'EMP-1001',
-    name: 'Sarah Jenkins',
-    email: 'sarah.jenkins@company.com',
-    phone: '+1 (555) 234-5678',
+    name: 'Swathi',
+    email: 'swathi@gmail.com',
+    phone: '7978872330',
     department: 'Engineering',
     designation: 'VP of Engineering',
     joiningDate: '2021-03-15',

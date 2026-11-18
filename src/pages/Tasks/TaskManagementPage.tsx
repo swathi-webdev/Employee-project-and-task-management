@@ -412,6 +412,74 @@ export const TaskManagementPage: React.FC = () => {
             onChange={val => updateFilters('assignee', val)}
           />
         </div>
+
+        {/* Active Filter Chips */}
+        {(search || projectFilter || statusFilter || priorityFilter || assigneeFilter) && (
+          <div className="flex flex-wrap items-center gap-2 pt-3 mt-3 border-t border-slate-100 text-xs text-slate-500">
+            <span className="text-[11px] font-semibold text-slate-400">Active Filters:</span>
+            {search && (
+              <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full text-slate-700">
+                Search: "{search}"
+                <button
+                  onClick={() => updateFilters('search', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {projectFilter && (
+              <span className="inline-flex items-center gap-1 bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full font-medium">
+                Project: {projects.find(p => p.id === projectFilter)?.name || projectFilter}
+                <button
+                  onClick={() => updateFilters('project', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {statusFilter && (
+              <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium">
+                Status: {statusFilter}
+                <button
+                  onClick={() => updateFilters('status', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {priorityFilter && (
+              <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
+                Priority: {priorityFilter}
+                <button
+                  onClick={() => updateFilters('priority', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {assigneeFilter && (
+              <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-medium">
+                Assignee: {employees.find(e => e.id === assigneeFilter)?.name || assigneeFilter}
+                <button
+                  onClick={() => updateFilters('assignee', '')}
+                  className="hover:text-rose-500 font-bold ml-0.5"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            <button
+              onClick={() => setSearchParams({})}
+              className="text-brand-600 hover:text-brand-800 font-semibold underline text-[11px] ml-1"
+            >
+              Reset all
+            </button>
+          </div>
+        )}
       </div>
 
       {/* View Content: Kanban, Table, or Calendar */}

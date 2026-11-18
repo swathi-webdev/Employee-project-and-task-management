@@ -30,7 +30,7 @@ export interface AppSettings {
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
-  companyName: 'Apex Enterprise Systems',
+  companyName: 'Employee Management System',
   currency: 'USD ($)',
   dateFormat: 'MMM dd, yyyy',
   theme: 'light',

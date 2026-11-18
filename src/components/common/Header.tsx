@@ -29,6 +29,8 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
     clearAllNotifications,
     refreshAll,
     employees,
+    projects,
+    tasks,
     currentUser,
     setCurrentUserId,
   } = useApp();
@@ -42,6 +44,20 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Keyboard shortcut Ctrl+K / Cmd+K to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+        setSearchDropdownOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -123,11 +139,12 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         </div>
       </div>
 
-      {/* Middle: Search bar */}
-      <div className="hidden md:flex items-center flex-1 max-w-xs mx-6 relative" ref={searchRef}>
+      {/* Middle: Search bar with shortcut and live results */}
+      <div className="hidden md:flex items-center flex-1 max-w-sm mx-6 relative" ref={searchRef}>
         <div className="relative w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
+            ref={searchInputRef}
             type="text"
             value={globalSearch}
             onChange={e => {
@@ -135,47 +152,187 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
               setSearchDropdownOpen(true);
             }}
             onFocus={() => setSearchDropdownOpen(true)}
-            placeholder="Search tasks, projects, people..."
-            className="w-full pl-9 pr-4 py-1.5 text-xs bg-slate-100 border border-transparent rounded-lg text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all"
+            placeholder="Search employees, projects, tasks..."
+            className="w-full pl-9 pr-14 py-2 text-xs bg-slate-100 hover:bg-slate-100/80 border border-transparent rounded-xl text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-all shadow-2xs"
           />
+          <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center gap-0.5">
+            <kbd className="px-1.5 py-0.5 text-[10px] font-mono text-slate-400 bg-white border border-slate-200 rounded shadow-3xs">
+              Ctrl+K
+            </kbd>
+          </div>
         </div>
 
-        {/* Global search quick actions dropdown */}
+        {/* Global search quick actions & matched records dropdown */}
         {searchDropdownOpen && globalSearch.trim().length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-            <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-2 py-1">
-              Quick Navigation
-            </div>
-            <button
-              onClick={() => {
-                navigate(`/employees?search=${encodeURIComponent(globalSearch)}`);
-                setSearchDropdownOpen(false);
-              }}
-              className="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 rounded-lg flex items-center justify-between"
-            >
-              <span>Search Employees for "{globalSearch}"</span>
-              <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">Employees</span>
-            </button>
-            <button
-              onClick={() => {
-                navigate(`/projects?search=${encodeURIComponent(globalSearch)}`);
-                setSearchDropdownOpen(false);
-              }}
-              className="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 rounded-lg flex items-center justify-between"
-            >
-              <span>Search Projects for "{globalSearch}"</span>
-              <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">Projects</span>
-            </button>
-            <button
-              onClick={() => {
-                navigate(`/tasks?search=${encodeURIComponent(globalSearch)}`);
-                setSearchDropdownOpen(false);
-              }}
-              className="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 rounded-lg flex items-center justify-between"
-            >
-              <span>Search Tasks for "{globalSearch}"</span>
-              <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">Tasks</span>
-            </button>
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 max-h-96 overflow-y-auto divide-y divide-slate-100">
+            {/* Matched Employees */}
+            {(() => {
+              const matchedEmps = employees
+                .filter(
+                  e =>
+                    e.name.toLowerCase().includes(globalSearch.toLowerCase()) ||
+                    e.email.toLowerCase().includes(globalSearch.toLowerCase()) ||
+                    e.department.toLowerCase().includes(globalSearch.toLowerCase())
+                )
+                .slice(0, 3);
+
+              const matchedProjs = projects
+                .filter(
+                  p =>
+                    p.name.toLowerCase().includes(globalSearch.toLowerCase()) ||
+                    p.id.toLowerCase().includes(globalSearch.toLowerCase())
+                )
+                .slice(0, 3);
+
+              const matchedTasks = tasks
+                .filter(
+                  t =>
+                    t.title.toLowerCase().includes(globalSearch.toLowerCase()) ||
+                    t.id.toLowerCase().includes(globalSearch.toLowerCase())
+                )
+                .slice(0, 3);
+
+              const hasMatches =
+                matchedEmps.length > 0 || matchedProjs.length > 0 || matchedTasks.length > 0;
+
+              return (
+                <>
+                  {matchedEmps.length > 0 && (
+                    <div className="py-1">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                        <span>Employees</span>
+                        <span>{matchedEmps.length}</span>
+                      </div>
+                      {matchedEmps.map(emp => (
+                        <button
+                          key={emp.id}
+                          onClick={() => {
+                            navigate(`/employees/${emp.id}`);
+                            setSearchDropdownOpen(false);
+                            setGlobalSearch('');
+                          }}
+                          className="w-full text-left px-2.5 py-1.5 hover:bg-slate-50 rounded-lg flex items-center gap-2.5 transition-colors"
+                        >
+                          <Avatar name={emp.name} src={emp.avatar} size="xs" status={emp.status} />
+                          <div className="min-w-0 flex-1">
+                            <div className="text-xs font-semibold text-slate-800 truncate">
+                              {emp.name}
+                            </div>
+                            <div className="text-[10px] text-slate-400 truncate">
+                              {emp.department} • {emp.designation}
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {matchedProjs.length > 0 && (
+                    <div className="py-1">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                        <span>Projects</span>
+                        <span>{matchedProjs.length}</span>
+                      </div>
+                      {matchedProjs.map(proj => (
+                        <button
+                          key={proj.id}
+                          onClick={() => {
+                            navigate(`/projects/${proj.id}`);
+                            setSearchDropdownOpen(false);
+                            setGlobalSearch('');
+                          }}
+                          className="w-full text-left px-2.5 py-1.5 hover:bg-slate-50 rounded-lg flex items-center justify-between transition-colors"
+                        >
+                          <div className="min-w-0 flex-1 pr-2">
+                            <div className="text-xs font-semibold text-slate-800 truncate">
+                              {proj.name}
+                            </div>
+                            <div className="text-[10px] text-slate-400 font-mono">
+                              {proj.id} • {proj.status}
+                            </div>
+                          </div>
+                          <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded">
+                            {proj.priority}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {matchedTasks.length > 0 && (
+                    <div className="py-1">
+                      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 flex items-center justify-between">
+                        <span>Tasks</span>
+                        <span>{matchedTasks.length}</span>
+                      </div>
+                      {matchedTasks.map(task => (
+                        <button
+                          key={task.id}
+                          onClick={() => {
+                            navigate(`/tasks?selected=${task.id}`);
+                            setSearchDropdownOpen(false);
+                            setGlobalSearch('');
+                          }}
+                          className="w-full text-left px-2.5 py-1.5 hover:bg-slate-50 rounded-lg flex items-center justify-between transition-colors"
+                        >
+                          <div className="min-w-0 flex-1 pr-2">
+                            <div className="text-xs font-semibold text-slate-800 truncate">
+                              {task.title}
+                            </div>
+                            <div className="text-[10px] text-slate-400 font-mono">
+                              {task.id} • {task.status}
+                            </div>
+                          </div>
+                          <span className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                            {task.priority}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {!hasMatches && (
+                    <div className="py-4 text-center text-xs text-slate-400">
+                      No direct matches for "{globalSearch}"
+                    </div>
+                  )}
+
+                  {/* Filter Redirect Shortcuts */}
+                  <div className="pt-1 text-[11px]">
+                    <button
+                      onClick={() => {
+                        navigate(`/employees?search=${encodeURIComponent(globalSearch)}`);
+                        setSearchDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-2.5 py-1 text-slate-600 hover:text-brand-600 hover:bg-brand-50/50 rounded flex items-center justify-between"
+                    >
+                      <span>Filter Employee Directory</span>
+                      <span className="text-[10px] text-slate-400">Jump →</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigate(`/projects?search=${encodeURIComponent(globalSearch)}`);
+                        setSearchDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-2.5 py-1 text-slate-600 hover:text-brand-600 hover:bg-brand-50/50 rounded flex items-center justify-between"
+                    >
+                      <span>Filter Projects Portfolio</span>
+                      <span className="text-[10px] text-slate-400">Jump →</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigate(`/tasks?search=${encodeURIComponent(globalSearch)}`);
+                        setSearchDropdownOpen(false);
+                      }}
+                      className="w-full text-left px-2.5 py-1 text-slate-600 hover:text-brand-600 hover:bg-brand-50/50 rounded flex items-center justify-between"
+                    >
+                      <span>Filter Sprint Tasks</span>
+                      <span className="text-[10px] text-slate-400">Jump →</span>
+                    </button>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         )}
       </div>
