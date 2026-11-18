@@ -101,6 +101,10 @@ export const validateEmployeeForm = (
     errors.status = 'Status is required';
   }
 
+  if (!data.address?.trim()) {
+    errors.address = 'Address is required';
+  }
+
   if (data.reportingManagerId && data.id && data.reportingManagerId === data.id) {
     errors.reportingManagerId = 'An employee cannot report to themselves';
   }

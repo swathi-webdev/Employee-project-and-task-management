@@ -9,7 +9,7 @@ import {
   validateEmployeeForm,
   generateNextEmployeeId,
 } from '../../utils/validators';
-import { Upload, Sparkles, AlertTriangle } from 'lucide-react';
+import { Upload, Sparkles, AlertTriangle, MapPin } from 'lucide-react';
 
 interface EmployeeFormModalProps {
   isOpen: boolean;
@@ -384,9 +384,12 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
             <div className="sm:col-span-2">
               <FormInput
                 label="Office / Residence Address"
-                placeholder="742 Evergreen Terrace, Springfield, OR"
+                placeholder="e.g. 742 Evergreen Terrace, Springfield, OR"
                 value={formData.address}
+                required
+                prefixIcon={<MapPin className="w-4 h-4 text-slate-400" />}
                 error={errors.address}
+                helperText="Complete street, city, state/province address"
                 onChange={e => handleInputChange('address', e.target.value)}
               />
             </div>

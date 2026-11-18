@@ -94,10 +94,29 @@ describe('Validator Utilities', () => {
       salary: 90000,
       employmentType: 'Full-time',
       status: 'Active',
+      address: '742 Evergreen Terrace, Springfield, OR',
       reportingManagerId: 'EMP-1001', // Self!
     };
     const errors = validateEmployeeForm(data, []);
     expect(errors.reportingManagerId).toBe('An employee cannot report to themselves');
+  });
+
+  it('validates employee address is required', () => {
+    const data: Partial<Employee> = {
+      id: 'EMP-1002',
+      name: 'Alice Smith',
+      email: 'alice@company.com',
+      phone: '555-9876543',
+      department: 'Engineering',
+      designation: 'DevOps Lead',
+      joiningDate: '2022-01-01',
+      salary: 95000,
+      employmentType: 'Full-time',
+      status: 'Active',
+      address: '',
+    };
+    const errors = validateEmployeeForm(data, []);
+    expect(errors.address).toBe('Address is required');
   });
 });
 

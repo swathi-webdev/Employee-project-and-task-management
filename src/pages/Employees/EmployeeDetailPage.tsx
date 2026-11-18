@@ -259,6 +259,16 @@ export const EmployeeDetailPage: React.FC = () => {
                 <span className="text-slate-400 italic">None (Direct Report)</span>
               )}
             </div>
+
+            <div className="pt-3 flex justify-between items-start gap-4">
+              <span className="text-slate-500 flex items-center gap-1.5 shrink-0">
+                <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                Address
+              </span>
+              <span className="font-semibold text-slate-800 text-right">
+                {employee.address || '—'}
+              </span>
+            </div>
           </div>
         </div>
 

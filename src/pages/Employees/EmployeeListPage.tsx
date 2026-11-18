@@ -24,7 +24,8 @@ import {
   MoreHorizontal,
   AlertTriangle,
   Building,
-  Briefcase
+  Briefcase,
+  MapPin
 } from 'lucide-react';
 
 export const EmployeeListPage: React.FC = () => {
@@ -233,6 +234,18 @@ export const EmployeeListPage: React.FC = () => {
       key: 'phone',
       header: 'Phone',
       className: 'text-xs text-slate-500 hidden md:table-cell',
+    },
+    {
+      key: 'address',
+      header: 'Address',
+      sortable: true,
+      className: 'text-xs text-slate-600 max-w-[200px] truncate hidden xl:table-cell',
+      render: emp => (
+        <div className="flex items-center gap-1.5 text-slate-600 truncate" title={emp.address}>
+          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+          <span className="truncate">{emp.address || '—'}</span>
+        </div>
+      ),
     },
     {
       key: 'department',

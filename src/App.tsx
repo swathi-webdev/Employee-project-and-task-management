@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { AppProvider, useApp } from './context/AppContext';
+import { SidebarProvider, useSidebar } from './context/SidebarContext';
 import { Sidebar } from './components/common/Sidebar';
 import { Header } from './components/common/Header';
 import { ToastNotification } from './components/common/ToastNotification';
@@ -18,7 +19,14 @@ import { SettingsPage } from './pages/Settings/SettingsPage';
 
 const AppLayout: React.FC = () => {
   const { loading } = useApp();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { width, isResizing, setIsMobileOpen } = useSidebar();
+  const [isDesktop, setIsDesktop] = useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   if (loading) {
     return <LoadingSpinner fullPage message="Initializing enterprise workspace..." />;
@@ -27,11 +35,14 @@ const AppLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex">
       {/* Sidebar Navigation */}
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-64 transition-all duration-300">
-        <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+      {/* Main Content Area dynamically offset by adjustable sidebar width */}
+      <div
+        style={{ paddingLeft: isDesktop ? `${width}px` : 0 }}
+        className={`flex-1 flex flex-col min-w-0 ${isResizing ? 'transition-none' : 'transition-all duration-200'}`}
+      >
+        <Header onToggleSidebar={() => setIsMobileOpen(true)} />
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full animate-in fade-in duration-200">
           <Routes>
@@ -58,7 +69,9 @@ export default function App() {
     <BrowserRouter>
       <ToastProvider>
         <AppProvider>
-          <AppLayout />
+          <SidebarProvider>
+            <AppLayout />
+          </SidebarProvider>
         </AppProvider>
       </ToastProvider>
     </BrowserRouter>
