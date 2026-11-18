@@ -156,28 +156,8 @@ export const Sidebar: React.FC = () => {
           })}
         </nav>
 
-        {/* Sidebar Footer: System Status + Collapse Toggle Button */}
-        <div className="p-3 border-t border-slate-800/80 bg-navy-950/20 space-y-2">
-          {!isCollapsed ? (
-            <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-800/60">
-              <div className="flex items-center justify-between text-xs mb-1">
-                <span className="text-slate-400 font-medium">System Health</span>
-                <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Operational
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 leading-tight">
-                Single User Mode • LocalStorage
-              </p>
-            </div>
-          ) : (
-            <div className="flex justify-center py-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" title="System Operational" />
-            </div>
-          )}
-
-          {/* Quick Collapse / Expand Toggle Button */}
+        {/* Sidebar Footer: Collapse / Expand Toggle Button */}
+        <div className="p-3 border-t border-slate-800/80 bg-navy-950/20">
           <button
             onClick={toggleCollapse}
             title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
