@@ -23,6 +23,7 @@ interface DataTableProps<T> {
   isLoading?: boolean;
   emptyMessage?: string;
   onRowClick?: (item: T) => void;
+  dense?: boolean;
 }
 
 export function DataTable<T>({
@@ -38,6 +39,7 @@ export function DataTable<T>({
   isLoading,
   emptyMessage = 'No records found.',
   onRowClick,
+  dense = false,
 }: DataTableProps<T>) {
   const isSelectable = Boolean(onSelectRow && selectedIds);
   const allSelected =
@@ -54,7 +56,7 @@ export function DataTable<T>({
         <thead className="bg-slate-50/80 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500 select-none">
           <tr>
             {isSelectable && (
-              <th className="w-10 px-4 py-3 text-center">
+              <th className={`w-10 text-center ${dense ? 'px-2 py-2' : 'px-4 py-3'}`}>
                 <input
                   type="checkbox"
                   checked={Boolean(allSelected)}
@@ -73,7 +75,7 @@ export function DataTable<T>({
               return (
                 <th
                   key={col.key}
-                  className={`px-4 py-3.5 ${col.headerClassName || ''} ${
+                  className={`${dense ? 'px-2.5 py-2 text-[11px]' : 'px-4 py-3.5 text-xs'} ${col.headerClassName || ''} ${
                     col.sortable ? 'cursor-pointer hover:bg-slate-100 transition-colors' : ''
                   }`}
                   onClick={() => col.sortable && onSort && onSort(col.key)}
@@ -137,7 +139,7 @@ export function DataTable<T>({
                 >
                   {isSelectable && (
                     <td
-                      className="px-4 py-3 text-center"
+                      className={`text-center ${dense ? 'px-2 py-1.5' : 'px-4 py-3'}`}
                       onClick={e => e.stopPropagation()}
                     >
                       <input
@@ -150,7 +152,7 @@ export function DataTable<T>({
                   )}
 
                   {columns.map(col => (
-                    <td key={col.key} className={`px-4 py-3.5 ${col.className || ''}`}>
+                    <td key={col.key} className={`${dense ? 'px-2.5 py-1.5' : 'px-4 py-3.5'} ${col.className || ''}`}>
                       {col.render
                         ? col.render(item, index)
                         : (item as any)[col.key] ?? '—'}

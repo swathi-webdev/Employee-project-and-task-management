@@ -348,11 +348,11 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
           {/* Section: Compensation & Management */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormInput
-              label="Annual Salary ($ USD)"
+              label="Salary (₹ INR)"
               type="number"
               min="1"
               step="1000"
-              placeholder="120000"
+              placeholder="85000"
               value={formData.salary}
               required
               error={errors.salary}

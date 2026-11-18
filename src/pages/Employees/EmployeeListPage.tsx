@@ -222,13 +222,13 @@ export const EmployeeListPage: React.FC = () => {
       className: 'whitespace-nowrap',
       headerClassName: 'whitespace-nowrap',
       render: emp => (
-        <div className="flex items-center gap-3">
-          <Avatar name={emp.name} src={emp.avatar} size="sm" status={emp.status} />
+        <div className="flex items-center gap-2.5">
+          <Avatar name={emp.name} src={emp.avatar} size="xs" status={emp.status} />
           <div>
-            <div className="font-bold text-slate-900 hover:text-brand-600 transition-colors">
+            <div className="font-bold text-xs text-slate-900 hover:text-brand-600 transition-colors">
               {emp.name}
             </div>
-            <div className="text-xs text-slate-400">{emp.email}</div>
+            <div className="text-[11px] text-slate-400">{emp.email}</div>
           </div>
         </div>
       ),
@@ -288,7 +288,7 @@ export const EmployeeListPage: React.FC = () => {
       sortable: true,
       className: 'text-xs font-semibold text-slate-800 whitespace-nowrap hidden xl:table-cell',
       headerClassName: 'whitespace-nowrap hidden xl:table-cell',
-      render: emp => `$${emp.salary.toLocaleString()}`,
+      render: emp => `₹${emp.salary.toLocaleString('en-IN')}`,
     },
     {
       key: 'reportingManagerId',
@@ -361,44 +361,44 @@ export const EmployeeListPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-5">
-      {/* Top Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-        <div>
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-            Employee Directory
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Manage organization personnel, department roles, and compensation.
-          </p>
+    <div className="space-y-3">
+      {/* Sleek, Compact Command Bar (Header + Filters unified) */}
+      <div className="bg-white px-4 py-3 rounded-xl border border-slate-200/80 shadow-2xs space-y-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-base font-bold text-slate-900 tracking-tight">
+              Employee Directory
+            </h2>
+            <span className="px-2 py-0.5 text-[11px] font-semibold bg-brand-50 text-brand-700 rounded-full border border-brand-200/60">
+              {filteredEmployees.length} Personnel
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleExportSelected}
+              className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors flex items-center gap-1.5 shadow-2xs"
+              title="Export to CSV"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Export CSV</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setEditingEmployee(null);
+                setIsFormModalOpen(true);
+              }}
+              className="px-3.5 py-1.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-xs transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-brand-500/20"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Add Employee</span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={handleExportSelected}
-            className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5 shadow-2xs"
-            title="Export to CSV"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>Export CSV</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setEditingEmployee(null);
-              setIsFormModalOpen(true);
-            }}
-            className="px-4 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-brand-500/20"
-          >
-            <UserPlus className="w-4 h-4" />
-            <span>Add Employee</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Filters and Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Compact Filters & Search Bar */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-1.5 border-t border-slate-100">
           <SearchBar
             value={search}
             onChange={val => updateFilters('search', val)}
@@ -431,10 +431,10 @@ export const EmployeeListPage: React.FC = () => {
 
         {/* Active Filter Chips */}
         {(search || departmentFilter || designationFilter || statusFilter) && (
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs text-slate-500">
+          <div className="flex flex-wrap items-center gap-2 pt-1.5 border-t border-slate-100 text-xs text-slate-500">
             <span className="text-[11px] font-semibold text-slate-400">Active Filters:</span>
             {search && (
-              <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full text-slate-700">
+              <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full text-slate-700 text-[11px]">
                 Search: "{search}"
                 <button
                   onClick={() => updateFilters('search', '')}
@@ -445,7 +445,7 @@ export const EmployeeListPage: React.FC = () => {
               </span>
             )}
             {departmentFilter && (
-              <span className="inline-flex items-center gap-1 bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full font-medium">
+              <span className="inline-flex items-center gap-1 bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full font-medium text-[11px]">
                 Dept: {departmentFilter}
                 <button
                   onClick={() => updateFilters('department', '')}
@@ -456,7 +456,7 @@ export const EmployeeListPage: React.FC = () => {
               </span>
             )}
             {designationFilter && (
-              <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-medium">
+              <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-medium text-[11px]">
                 Role: {designationFilter}
                 <button
                   onClick={() => updateFilters('designation', '')}
@@ -467,7 +467,7 @@ export const EmployeeListPage: React.FC = () => {
               </span>
             )}
             {statusFilter && (
-              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
+              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-medium text-[11px]">
                 Status: {statusFilter}
                 <button
                   onClick={() => updateFilters('status', '')}
@@ -488,32 +488,32 @@ export const EmployeeListPage: React.FC = () => {
 
         {/* Bulk Action Controls Bar (visible when items selected) */}
         {selectedIds.length > 0 && (
-          <div className="flex items-center justify-between p-2.5 bg-brand-50 border border-brand-200 rounded-xl text-xs text-brand-900 animate-in fade-in duration-150">
+          <div className="flex items-center justify-between p-2 bg-brand-50 border border-brand-200 rounded-lg text-xs text-brand-900 animate-in fade-in duration-150">
             <span className="font-semibold">
               {selectedIds.length} employee{selectedIds.length > 1 ? 's' : ''} selected
             </span>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setBulkActionConfirm({ type: 'activate', count: selectedIds.length })}
-                className="px-2.5 py-1 bg-white border border-brand-200 rounded-lg hover:bg-brand-100 font-medium flex items-center gap-1 text-emerald-700"
+                className="px-2 py-1 bg-white border border-brand-200 rounded hover:bg-brand-100 font-medium flex items-center gap-1 text-emerald-700 text-xs"
               >
-                <CheckCircle className="w-3.5 h-3.5" />
-                Activate Selected
+                <CheckCircle className="w-3 h-3" />
+                Activate
               </button>
               <button
                 onClick={() => setBulkActionConfirm({ type: 'deactivate', count: selectedIds.length })}
-                className="px-2.5 py-1 bg-white border border-brand-200 rounded-lg hover:bg-brand-100 font-medium flex items-center gap-1 text-slate-700"
+                className="px-2 py-1 bg-white border border-brand-200 rounded hover:bg-brand-100 font-medium flex items-center gap-1 text-slate-700 text-xs"
               >
-                <XCircle className="w-3.5 h-3.5" />
-                Deactivate Selected
+                <XCircle className="w-3 h-3" />
+                Deactivate
               </button>
               <button
                 onClick={() => setBulkActionConfirm({ type: 'delete', count: selectedIds.length })}
-                className="px-2.5 py-1 bg-white border border-rose-200 rounded-lg hover:bg-rose-50 font-medium flex items-center gap-1 text-rose-600"
+                className="px-2 py-1 bg-white border border-rose-200 rounded hover:bg-rose-50 font-medium flex items-center gap-1 text-rose-600 text-xs"
               >
-                <Trash2 className="w-3.5 h-3.5" />
-                Delete Selected
+                <Trash2 className="w-3 h-3" />
+                Delete
               </button>
             </div>
           </div>
@@ -521,7 +521,7 @@ export const EmployeeListPage: React.FC = () => {
       </div>
 
       {/* Main Employee Table */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-2xs overflow-hidden">
         <DataTable<Employee>
           data={paginatedEmployees}
           columns={columns}
@@ -533,6 +533,7 @@ export const EmployeeListPage: React.FC = () => {
           onSelectRow={handleSelectRow}
           onSelectAll={handleSelectAll}
           onRowClick={emp => navigate(`/employees/${emp.id}`)}
+          dense={true}
           emptyMessage="No employees found matching your criteria."
         />
 

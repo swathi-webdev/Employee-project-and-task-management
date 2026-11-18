@@ -237,11 +237,11 @@ export const EmployeeDetailPage: React.FC = () => {
 
             <div className="pt-3 flex justify-between">
               <span className="text-slate-500 flex items-center gap-1.5">
-                <DollarSign className="w-3.5 h-3.5 text-slate-400" />
-                Annual Salary
+                <span className="font-semibold text-slate-400 text-xs">₹</span>
+                Compensation / Salary
               </span>
               <span className="font-bold text-slate-900">
-                ${employee.salary.toLocaleString()} USD
+                ₹{employee.salary.toLocaleString('en-IN')}
               </span>
             </div>
 

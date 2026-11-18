@@ -43,7 +43,7 @@ const AppLayout: React.FC = () => {
       >
         <Header onToggleSidebar={() => setIsMobileOpen(true)} />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full animate-in fade-in duration-200">
+        <main className="flex-1 p-3 sm:p-4 lg:p-4 w-full animate-in fade-in duration-200">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/employees" element={<EmployeeListPage />} />
