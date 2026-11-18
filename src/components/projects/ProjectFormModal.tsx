@@ -32,8 +32,8 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
     description: '',
     managerId: '',
     employeeIds: [],
-    startDate: new Date().toISOString().split('T')[0],
-    endDate: new Date(Date.now() + 90 * 86400000).toISOString().split('T')[0],
+    startDate: '',
+    endDate: '',
     priority: 'Medium',
     status: 'Planning',
   });
@@ -56,21 +56,33 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       });
     } else {
       const nextId = generateNextProjectId(projects);
-      const defaultManager = activeEmployees[0]?.id || '';
       setFormData({
         id: nextId,
         name: '',
         description: '',
-        managerId: defaultManager,
-        employeeIds: defaultManager ? [defaultManager] : [],
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(Date.now() + 90 * 86400000).toISOString().split('T')[0],
+        managerId: '',
+        employeeIds: [],
+        startDate: '',
+        endDate: '',
         priority: 'Medium',
         status: 'Planning',
       });
     }
     setErrors({});
-  }, [initialProject, isOpen, projects, employees]);
+  }, [initialProject, isOpen, projects]);
+
+  const handleNameChange = (val: string) => {
+    // Only characters, spaces, hyphens, and apostrophes allowed (no numbers)
+    const sanitized = val.replace(/[0-9]/g, '');
+    setFormData(prev => ({ ...prev, name: sanitized }));
+    if (errors.name) {
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next.name;
+        return next;
+      });
+    }
+  };
 
   const handleToggleEmployee = (empId: string) => {
     setFormData(prev => {
@@ -78,11 +90,6 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
       const newIds = exists
         ? prev.employeeIds.filter(id => id !== empId)
         : [...prev.employeeIds, empId];
-
-      // If this employee is the manager, keep them in employeeIds
-      if (empId === prev.managerId && exists) {
-        // Warning: manager should ideally be in team members
-      }
       return { ...prev, employeeIds: newIds };
     });
   };
@@ -95,6 +102,13 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
         : [...prev.employeeIds, managerId];
       return { ...prev, managerId, employeeIds: ids };
     });
+    if (errors.managerId) {
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next.managerId;
+        return next;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -103,15 +117,25 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
 
     if (!formData.name.trim()) {
       newErrors.name = 'Project name is required';
+    } else if (/\d/.test(formData.name)) {
+      newErrors.name = 'Project name cannot contain numbers';
     }
 
     if (!formData.managerId) {
       newErrors.managerId = 'Project manager is required';
     }
 
-    const dateErr = validateProjectDates(formData.startDate, formData.endDate);
-    if (dateErr) {
-      newErrors.endDate = dateErr;
+    if (!formData.startDate) {
+      newErrors.startDate = 'Start date is required';
+    }
+
+    if (!formData.endDate) {
+      newErrors.endDate = 'Target end date is required';
+    } else if (formData.startDate) {
+      const dateErr = validateProjectDates(formData.startDate, formData.endDate);
+      if (dateErr) {
+        newErrors.endDate = dateErr;
+      }
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -130,6 +154,15 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
     }
   };
 
+  const isProjectFormValid = Boolean(
+    formData.name?.trim() &&
+    !/\d/.test(formData.name) &&
+    formData.managerId &&
+    formData.startDate &&
+    formData.endDate &&
+    !validateProjectDates(formData.startDate, formData.endDate)
+  );
+
   return (
     <Modal
       isOpen={isOpen}
@@ -147,23 +180,35 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
           >
             Cancel
           </button>
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={isSubmitting}
-            className="px-5 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-xs transition-colors flex items-center gap-2"
-          >
-            {isSubmitting ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/60 border-t-white rounded-full animate-spin" />
-                <span>Saving...</span>
-              </>
-            ) : isEditing ? (
-              'Save Changes'
-            ) : (
-              'Create Project'
+          <div className="flex items-center gap-3">
+            {!isProjectFormValid && (
+              <span className="text-[11px] text-amber-600 font-medium hidden sm:inline">
+                * Fill required fields to save
+              </span>
             )}
-          </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isSubmitting || !isProjectFormValid}
+              className={`px-5 py-2 text-sm font-medium text-white rounded-lg shadow-xs transition-colors flex items-center gap-2 ${
+                isProjectFormValid && !isSubmitting
+                  ? 'bg-brand-600 hover:bg-brand-700 cursor-pointer focus:ring-2 focus:ring-brand-500/20'
+                  : 'bg-slate-300 text-slate-500 cursor-not-allowed opacity-75'
+              }`}
+              title={!isProjectFormValid ? 'Fill required fields to create project' : 'Save project'}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/60 border-t-white rounded-full animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : isEditing ? (
+                'Save Changes'
+              ) : (
+                'Create Project'
+              )}
+            </button>
+          </div>
         </div>
       }
     >
@@ -189,8 +234,14 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
               placeholder="e.g. Mobile App Redesign"
               value={formData.name}
               required
+              helperText="Only characters and spaces allowed (numbers not allowed)"
               error={errors.name}
-              onChange={e => setFormData({ ...formData, name: e.target.value })}
+              onKeyDown={e => {
+                if (e.key >= '0' && e.key <= '9') {
+                  e.preventDefault();
+                }
+              }}
+              onChange={e => handleNameChange(e.target.value)}
             />
           </div>
         </div>
@@ -216,6 +267,7 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
             label="Project Manager"
             value={formData.managerId}
             required
+            placeholder="Select project manager"
             options={activeEmployees.map(e => ({
               value: e.id,
               label: `${e.name} (${e.department} - ${e.designation})`,

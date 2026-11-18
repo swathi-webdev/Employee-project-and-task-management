@@ -28,16 +28,20 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
 }) => {
   const isEditing = Boolean(initialEmployee);
 
-  const [formData, setFormData] = useState<Omit<Employee, 'createdAt' | 'updatedAt'>>({
+  type EmployeeFormData = Omit<Employee, 'createdAt' | 'updatedAt' | 'salary'> & {
+    salary: number | string;
+  };
+
+  const [formData, setFormData] = useState<EmployeeFormData>({
     id: '',
     name: '',
     email: '',
     phone: '',
-    department: 'Engineering',
-    designation: 'Senior Frontend Architect',
-    joiningDate: new Date().toISOString().split('T')[0],
+    department: '',
+    designation: '',
+    joiningDate: '',
     employmentType: 'Full-time',
-    salary: 100000,
+    salary: '',
     reportingManagerId: '',
     status: 'Active',
     avatar: AVATAR_PRESETS[0],
@@ -76,14 +80,14 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
         name: '',
         email: '',
         phone: '',
-        department: 'Engineering',
-        designation: DESIGNATIONS_BY_DEPARTMENT['Engineering'][0],
-        joiningDate: new Date().toISOString().split('T')[0],
+        department: '',
+        designation: '',
+        joiningDate: '',
         employmentType: 'Full-time',
-        salary: 95000,
+        salary: '',
         reportingManagerId: '',
         status: 'Active',
-        avatar: AVATAR_PRESETS[Math.floor(Math.random() * AVATAR_PRESETS.length)],
+        avatar: AVATAR_PRESETS[0],
         address: '',
       });
       setCustomAvatarUrl('');
@@ -155,7 +159,7 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validationErrors = validateEmployeeForm(formData, existingEmployees, isEditing);
+    const validationErrors = validateEmployeeForm(formData as any, existingEmployees, isEditing);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -369,6 +373,7 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
               label="Department"
               value={formData.department}
               options={DEPARTMENTS}
+              placeholder="Select department"
               required
               error={errors.department}
               onChange={e => handleDepartmentChange(e.target.value)}
@@ -378,6 +383,7 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
               label="Designation"
               value={formData.designation}
               options={designations}
+              placeholder="Select designation"
               required
               error={errors.designation}
               onChange={e => handleInputChange('designation', e.target.value)}

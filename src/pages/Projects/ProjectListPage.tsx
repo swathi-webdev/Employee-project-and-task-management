@@ -48,7 +48,7 @@ export const ProjectListPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(6);
-  const [sortColumn, setSortColumn] = useState<string>('name');
+  const [sortColumn, setSortColumn] = useState<string>('id');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   // Modals
@@ -87,6 +87,12 @@ export const ProjectListPage: React.FC = () => {
   // Sorting
   const sortedProjects = useMemo(() => {
     return [...filteredProjects].sort((a, b) => {
+      if (sortColumn === 'id') {
+        const numA = parseInt(a.id.replace(/\D/g, '') || '0', 10);
+        const numB = parseInt(b.id.replace(/\D/g, '') || '0', 10);
+        return sortDirection === 'asc' ? numA - numB : numB - numA;
+      }
+
       let aVal = (a as any)[sortColumn];
       let bVal = (b as any)[sortColumn];
 

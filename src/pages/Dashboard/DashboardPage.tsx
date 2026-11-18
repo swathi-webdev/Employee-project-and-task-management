@@ -46,9 +46,13 @@ export const DashboardPage: React.FC = () => {
     .sort((a, b) => new Date(b.joiningDate).getTime() - new Date(a.joiningDate).getTime())
     .slice(0, 5);
 
-  // Recent projects
+  // Recent projects (ordered 1, 2, 3)
   const recentProjects = [...projects]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort((a, b) => {
+      const numA = parseInt(a.id.replace(/\D/g, '') || '0', 10);
+      const numB = parseInt(b.id.replace(/\D/g, '') || '0', 10);
+      return numA - numB;
+    })
     .slice(0, 4);
 
   // Department distribution
