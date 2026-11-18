@@ -93,6 +93,15 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const currentUser = employees[0] || {
+    id: 'EMP-1001',
+    name: 'Abi',
+    designation: 'Associate Product Manager',
+    email: 'abi@company.com',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    status: 'Active' as const,
+  };
+
   return (
     <header className="sticky top-0 z-30 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between">
       {/* Left side: Hamburger + Title + Breadcrumbs */}
@@ -418,21 +427,24 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         {/* Divider */}
         <div className="h-6 w-px bg-slate-200" />
 
-        {/* Single User Profile Menu */}
+        {/* User Profile Menu */}
         <div className="relative" ref={userRef}>
           <button
             onClick={() => setShowUserMenu(prev => !prev)}
-            className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-slate-100 transition-colors"
+            className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-100 transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-xs ring-2 ring-white">
-              AD
-            </div>
+            <Avatar
+              name={currentUser.name}
+              src={currentUser.avatar}
+              size="sm"
+              status={currentUser.status}
+            />
             <div className="hidden sm:block text-left">
               <div className="text-xs font-bold text-slate-800 leading-tight">
-                Administrator
+                {currentUser.name}
               </div>
               <div className="text-[10px] text-slate-400 font-medium">
-                System Admin
+                {currentUser.designation}
               </div>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
@@ -441,14 +453,25 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
           {showUserMenu && (
             <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
               <div className="px-3 py-2.5 border-b border-slate-100">
-                <div className="text-xs font-bold text-slate-900">Administrator</div>
-                <div className="text-[11px] text-slate-400">admin@ems.local</div>
+                <div className="text-xs font-bold text-slate-900">{currentUser.name}</div>
+                <div className="text-[11px] text-slate-400">{currentUser.email}</div>
                 <div className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 inline-block px-1.5 py-0.2 rounded mt-1.5">
-                  Single User Mode
+                  Logged In • Single User Mode
                 </div>
               </div>
 
               <div className="py-1">
+                <button
+                  onClick={() => {
+                    navigate(`/employees/${currentUser.id}`);
+                    setShowUserMenu(false);
+                  }}
+                  className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
+                >
+                  <User className="w-3.5 h-3.5 text-slate-400" />
+                  View My Profile
+                </button>
+
                 <button
                   onClick={() => {
                     refreshAll();
