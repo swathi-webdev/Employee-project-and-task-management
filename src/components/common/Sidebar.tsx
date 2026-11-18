@@ -83,13 +83,13 @@ export const Sidebar: React.FC = () => {
             {!isCollapsed && (
               <div className="min-w-0 transition-opacity duration-200">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-extrabold text-white tracking-tight text-sm truncate">
-                    EMS
-                  </span>
+                  <p className="font-bold text-white tracking-tight text-sm truncate">
+                    Employee Management System
+                  </p>
                   
                 </div>
                 <span className="block text-[11px] text-slate-400 font-medium truncate">
-                  Employee  Management System
+                  Employee Project and task Management
                 </span>
               </div>
             )}
@@ -109,7 +109,7 @@ export const Sidebar: React.FC = () => {
         <nav className="flex-1 px-3 py-5 space-y-1.5 overflow-y-auto">
           {!isCollapsed && (
             <div className="px-2 pb-2 text-[10px] font-bold tracking-wider text-slate-500 uppercase select-none">
-              Platform Modules
+             Modules
             </div>
           )}
 

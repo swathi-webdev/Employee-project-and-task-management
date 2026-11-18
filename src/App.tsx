@@ -7,6 +7,7 @@ import { Sidebar } from './components/common/Sidebar';
 import { Header } from './components/common/Header';
 import { ToastNotification } from './components/common/ToastNotification';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
+import { EnableNotificationModal } from './components/common/EnableNotificationModal';
 
 // Pages
 import { DashboardPage } from './pages/Dashboard/DashboardPage';
@@ -58,6 +59,9 @@ const AppLayout: React.FC = () => {
 
       {/* Toast Notification Container */}
       <ToastNotification />
+
+      {/* Website Open Native Notification Permission Prompt */}
+      <EnableNotificationModal />
     </div>
   );
 };
