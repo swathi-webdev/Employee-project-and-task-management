@@ -51,7 +51,7 @@ export const EmployeeListPage: React.FC = () => {
   // Table pagination and sorting
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [sortColumn, setSortColumn] = useState<string>('name');
+  const [sortColumn, setSortColumn] = useState<string>('id');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   // Selection
@@ -212,12 +212,15 @@ export const EmployeeListPage: React.FC = () => {
       key: 'id',
       header: 'ID',
       sortable: true,
-      className: 'font-mono text-xs font-semibold text-slate-500',
+      className: 'font-mono text-xs font-semibold text-slate-500 whitespace-nowrap',
+      headerClassName: 'whitespace-nowrap',
     },
     {
       key: 'name',
       header: 'Employee',
       sortable: true,
+      className: 'whitespace-nowrap',
+      headerClassName: 'whitespace-nowrap',
       render: emp => (
         <div className="flex items-center gap-3">
           <Avatar name={emp.name} src={emp.avatar} size="sm" status={emp.status} />
@@ -233,13 +236,15 @@ export const EmployeeListPage: React.FC = () => {
     {
       key: 'phone',
       header: 'Phone',
-      className: 'text-xs text-slate-500 hidden md:table-cell',
+      className: 'text-xs text-slate-500 whitespace-nowrap hidden md:table-cell',
+      headerClassName: 'whitespace-nowrap hidden md:table-cell',
     },
     {
       key: 'address',
       header: 'Address',
       sortable: true,
-      className: 'text-xs text-slate-600 max-w-[200px] truncate hidden xl:table-cell',
+      className: 'text-xs text-slate-600 max-w-[220px] truncate hidden xl:table-cell',
+      headerClassName: 'whitespace-nowrap hidden xl:table-cell',
       render: emp => (
         <div className="flex items-center gap-1.5 text-slate-600 truncate" title={emp.address}>
           <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -251,6 +256,8 @@ export const EmployeeListPage: React.FC = () => {
       key: 'department',
       header: 'Department',
       sortable: true,
+      className: 'whitespace-nowrap font-medium text-slate-800 text-xs',
+      headerClassName: 'whitespace-nowrap',
       render: emp => (
         <span className="font-medium text-slate-800 text-xs">{emp.department}</span>
       ),
@@ -258,31 +265,36 @@ export const EmployeeListPage: React.FC = () => {
     {
       key: 'designation',
       header: 'Designation',
-      className: 'text-xs text-slate-600 hidden lg:table-cell',
+      className: 'text-xs text-slate-600 whitespace-nowrap hidden lg:table-cell',
+      headerClassName: 'whitespace-nowrap hidden lg:table-cell',
     },
     {
       key: 'joiningDate',
       header: 'Joined',
       sortable: true,
       className: 'text-xs text-slate-500 whitespace-nowrap hidden sm:table-cell',
+      headerClassName: 'whitespace-nowrap hidden sm:table-cell',
       render: emp => formatDate(emp.joiningDate),
     },
     {
       key: 'employmentType',
       header: 'Type',
-      className: 'text-xs text-slate-500 hidden xl:table-cell',
+      className: 'text-xs text-slate-500 whitespace-nowrap hidden xl:table-cell',
+      headerClassName: 'whitespace-nowrap hidden xl:table-cell',
     },
     {
       key: 'salary',
       header: 'Salary',
       sortable: true,
-      className: 'text-xs font-semibold text-slate-800 hidden xl:table-cell',
+      className: 'text-xs font-semibold text-slate-800 whitespace-nowrap hidden xl:table-cell',
+      headerClassName: 'whitespace-nowrap hidden xl:table-cell',
       render: emp => `$${emp.salary.toLocaleString()}`,
     },
     {
       key: 'reportingManagerId',
       header: 'Manager',
-      className: 'text-xs text-slate-500 hidden lg:table-cell',
+      className: 'text-xs text-slate-500 whitespace-nowrap hidden lg:table-cell',
+      headerClassName: 'whitespace-nowrap hidden lg:table-cell',
       render: emp => {
         if (!emp.reportingManagerId) return <span className="text-slate-400 italic">None</span>;
         const manager = getEmployeeById(emp.reportingManagerId);
@@ -297,6 +309,8 @@ export const EmployeeListPage: React.FC = () => {
       key: 'status',
       header: 'Status',
       sortable: true,
+      className: 'whitespace-nowrap',
+      headerClassName: 'whitespace-nowrap',
       render: emp => (
         <button
           onClick={e => {

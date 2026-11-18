@@ -2,11 +2,11 @@ import { Employee, Project, Task } from '../types';
 import { INITIAL_EMPLOYEES, INITIAL_PROJECTS, INITIAL_TASKS } from '../data/mockData';
 
 const KEYS = {
-  EMPLOYEES: 'ems_employees_v1',
-  PROJECTS: 'ems_projects_v1',
-  TASKS: 'ems_tasks_v1',
-  SETTINGS: 'ems_settings_v1',
-  API_CONFIG: 'ems_api_config_v1',
+  EMPLOYEES: 'ems_employees_v2',
+  PROJECTS: 'ems_projects_v2',
+  TASKS: 'ems_tasks_v2',
+  SETTINGS: 'ems_settings_v2',
+  API_CONFIG: 'ems_api_config_v2',
   CURRENT_USER: 'ems_current_user_id',
 };
 

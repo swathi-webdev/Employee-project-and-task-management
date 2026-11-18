@@ -5,7 +5,6 @@ import {
   Users,
   Briefcase,
   CheckSquare,
-  Settings,
   Layers,
   X,
   ChevronLeft,
@@ -55,11 +54,6 @@ export const Sidebar: React.FC = () => {
       path: '/tasks',
       icon: CheckSquare,
       badge: openTasksCount,
-    },
-    {
-      label: 'Settings',
-      path: '/settings',
-      icon: Settings,
     },
   ];
 

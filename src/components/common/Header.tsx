@@ -85,8 +85,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         return pathParts.length > 1 ? 'Project Details' : 'Projects Portfolio';
       case 'tasks':
         return 'Task & Sprint Management';
-      case 'settings':
-        return 'Platform Settings';
       case 'dashboard':
       default:
         return 'Executive Overview';
@@ -453,13 +451,13 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
               <div className="py-1">
                 <button
                   onClick={() => {
-                    navigate('/settings');
+                    refreshAll();
                     setShowUserMenu(false);
                   }}
                   className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
                 >
-                  <Shield className="w-3.5 h-3.5 text-slate-400" />
-                  Workspace Settings
+                  <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
+                  Sync / Refresh Data
                 </button>
               </div>
             </div>

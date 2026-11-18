@@ -15,7 +15,6 @@ import { EmployeeDetailPage } from './pages/Employees/EmployeeDetailPage';
 import { ProjectListPage } from './pages/Projects/ProjectListPage';
 import { ProjectDetailPage } from './pages/Projects/ProjectDetailPage';
 import { TaskManagementPage } from './pages/Tasks/TaskManagementPage';
-import { SettingsPage } from './pages/Settings/SettingsPage';
 
 const AppLayout: React.FC = () => {
   const { loading } = useApp();
@@ -52,7 +51,6 @@ const AppLayout: React.FC = () => {
             <Route path="/projects" element={<ProjectListPage />} />
             <Route path="/projects/:id" element={<ProjectDetailPage />} />
             <Route path="/tasks" element={<TaskManagementPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
