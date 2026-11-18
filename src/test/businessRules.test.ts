@@ -56,7 +56,7 @@ describe('API Business Rules Enforcement', () => {
         id: 'TSK-999',
         title: 'Task for Inactive Employee',
         description: 'Testing',
-        projectId: 'PRJ-101',
+        projectId: 'PRJ-1',
         assignedEmployeeId: inactiveEmployee.id,
         priority: 'Low',
         status: 'To Do',

@@ -105,7 +105,24 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
   };
 
   const handleInputChange = (field: keyof typeof formData, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    let sanitizedValue = value;
+
+    // Full name: cannot contain numbers
+    if (field === 'name') {
+      sanitizedValue = typeof value === 'string' ? value.replace(/[0-9]/g, '') : value;
+    }
+
+    // Phone number: only numbers and optional leading +
+    if (field === 'phone') {
+      sanitizedValue = typeof value === 'string' ? value.replace(/[^\d+]/g, '') : value;
+    }
+
+    // Salary: only numbers
+    if (field === 'salary') {
+      sanitizedValue = typeof value === 'string' ? value.replace(/\D/g, '') : value;
+    }
+
+    setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
     setIsDirty(true);
     // Clear error for that field
     if (errors[field]) {
@@ -174,6 +191,21 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
 
   const designations = DESIGNATIONS_BY_DEPARTMENT[formData.department] || [formData.designation];
 
+  const isFormValid = Boolean(
+    formData.name?.trim() &&
+    !/\d/.test(formData.name) &&
+    formData.name.trim().length >= 2 &&
+    formData.email?.trim() &&
+    formData.phone?.trim() &&
+    formData.phone.replace(/\D/g, '').length >= 7 &&
+    formData.department?.trim() &&
+    formData.designation?.trim() &&
+    formData.joiningDate?.trim() &&
+    formData.salary &&
+    Number(formData.salary) > 0 &&
+    formData.address?.trim()
+  );
+
   return (
     <>
       <Modal
@@ -196,23 +228,35 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
             >
               Cancel
             </button>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="px-5 py-2 text-sm font-medium text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-xs transition-colors flex items-center gap-2 focus:ring-2 focus:ring-brand-500/20"
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/60 border-t-white rounded-full animate-spin" />
-                  <span>Saving...</span>
-                </>
-              ) : isEditing ? (
-                'Save Changes'
-              ) : (
-                'Create Employee'
+            <div className="flex items-center gap-3">
+              {!isFormValid && (
+                <span className="text-[11px] text-amber-600 font-medium hidden sm:inline">
+                  * Fill all required fields to save
+                </span>
               )}
-            </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isSubmitting || !isFormValid}
+                className={`px-5 py-2 text-sm font-medium text-white rounded-lg shadow-xs transition-all flex items-center gap-2 ${
+                  isFormValid && !isSubmitting
+                    ? 'bg-brand-600 hover:bg-brand-700 cursor-pointer focus:ring-2 focus:ring-brand-500/20'
+                    : 'bg-slate-300 text-slate-500 cursor-not-allowed opacity-75'
+                }`}
+                title={!isFormValid ? 'Fill all required fields to save' : 'Save employee details'}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/60 border-t-white rounded-full animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : isEditing ? (
+                  'Save Changes'
+                ) : (
+                  'Create & Save Employee'
+                )}
+              </button>
+            </div>
           </div>
         }
       >
@@ -280,7 +324,13 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
               placeholder="e.g. Sarah Jenkins"
               value={formData.name}
               required
+              helperText="Only letters and spaces (numbers not allowed)"
               error={errors.name}
+              onKeyDown={e => {
+                if (e.key >= '0' && e.key <= '9') {
+                  e.preventDefault();
+                }
+              }}
               onChange={e => handleInputChange('name', e.target.value)}
             />
 
@@ -296,10 +346,19 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
 
             <FormInput
               label="Phone Number"
-              placeholder="+1 (555) 234-5678"
+              placeholder="9840123456"
               value={formData.phone}
               required
+              inputMode="numeric"
+              helperText="Numbers only (e.g. 9840123456)"
               error={errors.phone}
+              onKeyDown={e => {
+                if (['Backspace', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(e.key)) return;
+                if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase())) return;
+                if (!/[\d+]/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               onChange={e => handleInputChange('phone', e.target.value)}
             />
           </div>
@@ -349,13 +408,20 @@ export const EmployeeFormModal: React.FC<EmployeeFormModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormInput
               label="Salary (₹ INR)"
-              type="number"
-              min="1"
-              step="1000"
+              type="text"
+              inputMode="numeric"
               placeholder="85000"
               value={formData.salary}
               required
+              helperText="Numbers only in ₹ (e.g. 85000)"
               error={errors.salary}
+              onKeyDown={e => {
+                if (['Backspace', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Delete'].includes(e.key)) return;
+                if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase())) return;
+                if (!/\d/.test(e.key)) {
+                  e.preventDefault();
+                }
+              }}
               onChange={e => handleInputChange('salary', e.target.value)}
             />
 

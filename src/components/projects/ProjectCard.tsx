@@ -35,8 +35,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         {/* Header: ID, Priority, Actions */}
         <div className="flex items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
-              {project.id}
+            <span className="text-[11px] font-bold text-brand-700 bg-brand-50 border border-brand-200/80 px-2 py-0.5 rounded-md">
+              Project {project.id.replace(/^PRJ-?/i, '')}
             </span>
             <PriorityBadge priority={project.priority} />
           </div>

@@ -55,6 +55,8 @@ export const validateEmployeeForm = (
 
   if (!data.name?.trim()) {
     errors.name = 'Full name is required';
+  } else if (/\d/.test(data.name)) {
+    errors.name = 'Full name cannot contain numbers';
   } else if (data.name.trim().length < 2) {
     errors.name = 'Name must be at least 2 characters';
   }
@@ -191,7 +193,7 @@ export const generateNextEmployeeId = (existingEmployees: Employee[]): string =>
 };
 
 export const generateNextProjectId = (existingProjects: { id: string }[]): string => {
-  let maxNum = 100;
+  let maxNum = 0;
   existingProjects.forEach(prj => {
     const match = prj.id.match(/^PRJ-(\d+)$/i);
     if (match) {

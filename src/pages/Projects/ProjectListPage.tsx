@@ -131,9 +131,10 @@ export const ProjectListPage: React.FC = () => {
   const columns: Column<Project>[] = [
     {
       key: 'id',
-      header: 'ID',
+      header: 'Project #',
       sortable: true,
-      className: 'font-mono text-xs font-semibold text-slate-500',
+      className: 'font-mono text-xs font-semibold text-slate-700 whitespace-nowrap',
+      render: p => `Project ${p.id.replace(/^PRJ-?/i, '')}`,
     },
     {
       key: 'name',

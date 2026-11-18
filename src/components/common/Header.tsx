@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Menu,
   Bell,
@@ -25,7 +25,6 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const {
@@ -78,24 +77,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Compute breadcrumbs and title
-  const pathParts = location.pathname.split('/').filter(Boolean);
-  const currentSection = pathParts[0] || 'dashboard';
-
-  const getPageTitle = () => {
-    switch (currentSection) {
-      case 'employees':
-        return pathParts.length > 1 ? 'Employee Profile' : 'Employee Directory';
-      case 'projects':
-        return pathParts.length > 1 ? 'Project Details' : 'Projects Portfolio';
-      case 'tasks':
-        return 'Task & Sprint Management';
-      case 'dashboard':
-      default:
-        return 'Executive Overview';
-    }
-  };
-
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const activeUser = contextCurrentUser || employees[0] || {
@@ -109,7 +90,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 sm:px-6 flex items-center justify-between">
-      {/* Left side: Hamburger + Title + Breadcrumbs */}
+      {/* Left side: Mobile hamburger menu toggle */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleSidebar}
@@ -118,25 +99,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         >
           <Menu className="w-5 h-5" />
         </button>
-
-        <div>
-          <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-            <Link to="/" className="hover:text-brand-600 transition-colors">
-              App
-            </Link>
-            <span>/</span>
-            <span className="capitalize text-slate-600">{currentSection}</span>
-            {pathParts.length > 1 && (
-              <>
-                <span>/</span>
-                <span className="font-semibold text-slate-800">{pathParts[1]}</span>
-              </>
-            )}
-          </div>
-          <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-none mt-0.5">
-            {getPageTitle()}
-          </h1>
-        </div>
       </div>
 
       {/* Middle: Search bar with shortcut and live results */}
