@@ -86,12 +86,10 @@ export const Sidebar: React.FC = () => {
                   <span className="font-extrabold text-white tracking-tight text-sm truncate">
                     EMS
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-brand-500/20 text-brand-300 font-semibold border border-brand-500/30">
-                    Pro
-                  </span>
+                  
                 </div>
                 <span className="block text-[11px] text-slate-400 font-medium truncate">
-                  Employee Management
+                  Employee  Management System
                 </span>
               </div>
             )}

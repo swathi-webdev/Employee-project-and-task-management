@@ -7,10 +7,11 @@ import {
   Check,
   ExternalLink,
   ChevronDown,
+  ChevronRight,
   User,
+  Users,
   Shield,
   LogOut,
-  RefreshCw,
   AlertTriangle
 } from 'lucide-react';
 import { useApp } from '../../hooks/useApp';
@@ -27,14 +28,16 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
     notifications,
     markNotificationAsRead,
     clearAllNotifications,
-    refreshAll,
     employees,
     projects,
     tasks,
+    currentUser: contextCurrentUser,
+    setCurrentUserId,
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [isSwitchingUser, setIsSwitchingUser] = useState(false);
   const [globalSearch, setGlobalSearch] = useState('');
   const [searchDropdownOpen, setSearchDropdownOpen] = useState(false);
 
@@ -64,6 +67,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
       }
       if (userRef.current && !userRef.current.contains(e.target as Node)) {
         setShowUserMenu(false);
+        setIsSwitchingUser(false);
       }
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setSearchDropdownOpen(false);
@@ -93,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const currentUser = employees[0] || {
+  const activeUser = contextCurrentUser || employees[0] || {
     id: 'EMP-1001',
     name: 'Abi',
     designation: 'Associate Product Manager',
@@ -334,15 +338,6 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
       {/* Right side: Notifications & User profile */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Refresh button */}
-        <button
-          onClick={() => refreshAll()}
-          title="Refresh Data"
-          className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
-        >
-          <RefreshCw className="w-4 h-4" />
-        </button>
-
         {/* Notifications Dropdown */}
         <div className="relative" ref={notifRef}>
           <button
@@ -430,59 +425,123 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         {/* User Profile Menu */}
         <div className="relative" ref={userRef}>
           <button
-            onClick={() => setShowUserMenu(prev => !prev)}
+            onClick={() => {
+              setShowUserMenu(prev => !prev);
+              setIsSwitchingUser(false);
+            }}
             className="flex items-center gap-2.5 p-1 rounded-xl hover:bg-slate-100 transition-colors"
           >
             <Avatar
-              name={currentUser.name}
-              src={currentUser.avatar}
+              name={activeUser.name}
+              src={activeUser.avatar}
               size="sm"
-              status={currentUser.status}
+              status={activeUser.status}
             />
             <div className="hidden sm:block text-left">
               <div className="text-xs font-bold text-slate-800 leading-tight">
-                {currentUser.name}
+                {activeUser.name}
               </div>
               <div className="text-[10px] text-slate-400 font-medium">
-                {currentUser.designation}
+                {activeUser.designation}
               </div>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-              <div className="px-3 py-2.5 border-b border-slate-100">
-                <div className="text-xs font-bold text-slate-900">{currentUser.name}</div>
-                <div className="text-[11px] text-slate-400">{currentUser.email}</div>
-                <div className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 inline-block px-1.5 py-0.2 rounded mt-1.5">
-                  Logged In • Single User Mode
+            <div
+              className={`absolute right-0 mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150 ${
+                isSwitchingUser ? 'w-72' : 'w-60'
+              }`}
+            >
+              {!isSwitchingUser ? (
+                <>
+                  <div className="px-3 py-2.5 border-b border-slate-100 flex items-center gap-2.5">
+                    <Avatar
+                      name={activeUser.name}
+                      src={activeUser.avatar}
+                      size="sm"
+                      status={activeUser.status}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-bold text-slate-900 truncate">{activeUser.name}</div>
+                      <div className="text-[11px] text-slate-500 truncate">{activeUser.email}</div>
+                      <div className="text-[10px] text-slate-400 font-medium truncate">{activeUser.designation}</div>
+                    </div>
+                  </div>
+
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        navigate(`/employees/${activeUser.id}`);
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
+                    >
+                      <User className="w-3.5 h-3.5 text-slate-400" />
+                      View My Profile
+                    </button>
+
+                    <button
+                      onClick={() => setIsSwitchingUser(true)}
+                      className="w-full text-left px-3 py-2 text-xs font-medium text-brand-600 hover:bg-brand-50 rounded-lg flex items-center justify-between transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Users className="w-3.5 h-3.5 text-brand-600" />
+                        Switch User
+                      </span>
+                      <ChevronRight className="w-3.5 h-3.5 text-brand-500" />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <div className="px-3 py-2 border-b border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                      <Users className="w-3.5 h-3.5 text-brand-600" />
+                      <span>Switch Active User</span>
+                    </div>
+                    <button
+                      onClick={() => setIsSwitchingUser(false)}
+                      className="text-[11px] text-brand-600 hover:underline font-semibold"
+                    >
+                      Back
+                    </button>
+                  </div>
+
+                  <div className="max-h-64 overflow-y-auto p-1 space-y-0.5 divide-y divide-slate-50">
+                    {employees.map(emp => {
+                      const isSelected = emp.id === activeUser.id;
+                      return (
+                        <button
+                          key={emp.id}
+                          onClick={() => {
+                            setCurrentUserId(emp.id);
+                            setIsSwitchingUser(false);
+                            setShowUserMenu(false);
+                          }}
+                          className={`w-full text-left p-2 rounded-lg flex items-center gap-2.5 transition-colors ${
+                            isSelected
+                              ? 'bg-brand-50 text-brand-900 font-semibold'
+                              : 'hover:bg-slate-50 text-slate-700'
+                          }`}
+                        >
+                          <Avatar name={emp.name} src={emp.avatar} size="xs" status={emp.status} />
+                          <div className="min-w-0 flex-1">
+                            <div className="text-xs font-bold truncate flex items-center justify-between">
+                              <span>{emp.name}</span>
+                              {isSelected && <Check className="w-3.5 h-3.5 text-brand-600 shrink-0" />}
+                            </div>
+                            <div className="text-[10px] text-slate-400 truncate">
+                              {emp.email} • {emp.designation}
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-
-              <div className="py-1">
-                <button
-                  onClick={() => {
-                    navigate(`/employees/${currentUser.id}`);
-                    setShowUserMenu(false);
-                  }}
-                  className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
-                >
-                  <User className="w-3.5 h-3.5 text-slate-400" />
-                  View My Profile
-                </button>
-
-                <button
-                  onClick={() => {
-                    refreshAll();
-                    setShowUserMenu(false);
-                  }}
-                  className="w-full text-left px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
-                >
-                  <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
-                  Sync / Refresh Data
-                </button>
-              </div>
+              )}
             </div>
           )}
         </div>
