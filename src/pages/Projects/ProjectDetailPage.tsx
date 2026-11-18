@@ -138,7 +138,7 @@ export const ProjectDetailPage: React.FC = () => {
                 </span>
                 <h1 className="text-xl font-bold text-slate-900 tracking-tight">{project.name}</h1>
               </div>
-              <p className="text-xs text-slate-500 mt-1">{project.description}</p>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-1">{project.description}</p>
             </div>
           </div>
 
@@ -193,6 +193,36 @@ export const ProjectDetailPage: React.FC = () => {
         <div className="pt-2">
           <ProgressBar progress={progress} showLabel size="md" />
         </div>
+
+        {/* Formatted Project Scope & Description */}
+        {project.description && (
+          <div className="pt-4 border-t border-slate-100">
+            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+              Project Scope & Description
+            </h4>
+            <div className="bg-slate-50/80 p-4 rounded-xl border border-slate-200/70 text-xs sm:text-sm text-slate-700 leading-relaxed space-y-2">
+              {project.description.split('\n').map((line, idx) => {
+                const trimmed = line.trim();
+                if (!trimmed) return <div key={idx} className="h-1" />;
+                const isBullet = trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*');
+                if (isBullet) {
+                  const bulletContent = trimmed.replace(/^[•\-*]\s*/, '');
+                  return (
+                    <div key={idx} className="flex items-start gap-2.5 pl-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand-600 shrink-0 mt-2" />
+                      <span className="flex-1 leading-relaxed text-slate-700">{bulletContent}</span>
+                    </div>
+                  );
+                }
+                return (
+                  <p key={idx} className="leading-relaxed">
+                    {trimmed}
+                  </p>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Two Columns: Team Members & Associated Tasks */}

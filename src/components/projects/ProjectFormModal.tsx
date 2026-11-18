@@ -200,12 +200,15 @@ export const ProjectFormModal: React.FC<ProjectFormModalProps> = ({
             Project Description
           </label>
           <textarea
-            rows={3}
-            placeholder="High-level objectives, tech stack, and goals..."
+            rows={5}
+            placeholder="• Objective or feature milestone 1&#10;• Architecture & technical stack notes&#10;• Scope, deliverables, and targets..."
             value={formData.description}
             onChange={e => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 text-slate-900"
+            className="w-full px-3.5 py-2.5 text-xs sm:text-sm font-normal text-slate-800 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 leading-relaxed font-sans min-h-[130px] resize-y placeholder:text-slate-400"
           />
+          <p className="text-[11px] text-slate-400 mt-1">
+            Multi-line bullet points (•, -), line breaks, and detailed scopes are preserved with clean hanging alignment.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
