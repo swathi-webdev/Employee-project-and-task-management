@@ -31,7 +31,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   defaultStatus = 'To Do',
   defaultProjectId,
 }) => {
-  const { employees, projects, tasks: allTasks } = useApp();
+  const { employees, projects, tasks: allTasks, currentUser } = useApp();
   const isEditing = Boolean(initialTask);
 
   const activeEmployees = employees.filter(e => e.status === 'Active');
@@ -103,7 +103,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             id: `act-${Date.now()}`,
             timestamp: new Date().toISOString(),
             action: 'Created task',
-            user: 'Current User',
+            user: currentUser ? currentUser.name : 'System Admin',
           },
         ],
       });

@@ -56,6 +56,7 @@ export const DashboardPage: React.FC = () => {
   employees.forEach(emp => {
     departmentCounts[emp.department] = (departmentCounts[emp.department] || 0) + 1;
   });
+  const topDepartment = Object.entries(departmentCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Engineering';
 
   // Project status distribution
   const projectStatusCounts = {
@@ -184,7 +185,7 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-            <span>Primary Focus: Engineering</span>
+            <span>Largest Team: {topDepartment}</span>
             <button
               onClick={() => navigate('/employees')}
               className="text-brand-600 hover:text-brand-700 font-semibold flex items-center gap-1"

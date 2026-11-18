@@ -7,6 +7,7 @@ const KEYS = {
   TASKS: 'ems_tasks_v1',
   SETTINGS: 'ems_settings_v1',
   API_CONFIG: 'ems_api_config_v1',
+  CURRENT_USER: 'ems_current_user_id',
 };
 
 export interface ApiConfig {
@@ -116,12 +117,21 @@ export const storage = {
     localStorage.setItem(KEYS.API_CONFIG, JSON.stringify(config));
   },
 
+  getCurrentUserId(): string {
+    return localStorage.getItem(KEYS.CURRENT_USER) || '';
+  },
+
+  saveCurrentUserId(id: string): void {
+    localStorage.setItem(KEYS.CURRENT_USER, id);
+  },
+
   resetAll(): void {
     localStorage.setItem(KEYS.EMPLOYEES, JSON.stringify(INITIAL_EMPLOYEES));
     localStorage.setItem(KEYS.PROJECTS, JSON.stringify(INITIAL_PROJECTS));
     localStorage.setItem(KEYS.TASKS, JSON.stringify(INITIAL_TASKS));
     localStorage.setItem(KEYS.SETTINGS, JSON.stringify(DEFAULT_SETTINGS));
     localStorage.setItem(KEYS.API_CONFIG, JSON.stringify(DEFAULT_API_CONFIG));
+    localStorage.removeItem(KEYS.CURRENT_USER);
   },
 
   exportBackup(): string {
