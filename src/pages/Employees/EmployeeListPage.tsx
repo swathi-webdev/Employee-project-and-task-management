@@ -33,7 +33,6 @@ export const EmployeeListPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const {
     employees,
-    projects,
     createEmployee,
     updateEmployee,
     deleteEmployee,
@@ -222,35 +221,17 @@ export const EmployeeListPage: React.FC = () => {
       sortable: true,
       className: 'whitespace-nowrap',
       headerClassName: 'whitespace-nowrap',
-      render: emp => {
-        const empProjects = projects.filter(
-          p => p.employeeIds.includes(emp.id) || p.managerId === emp.id
-        );
-        return (
-          <div className="flex items-center gap-2.5">
-            <Avatar name={emp.name} src={emp.avatar} size="xs" status={emp.status} />
-            <div>
-              <div className="font-bold text-xs text-slate-900 hover:text-brand-600 transition-colors">
-                {emp.name}
-              </div>
-              <div className="text-[11px] text-slate-400">{emp.email}</div>
-              {empProjects.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-1 max-w-[200px]">
-                  {empProjects.map(p => (
-                    <span
-                      key={p.id}
-                      className="text-[9px] font-semibold text-brand-700 bg-brand-50 border border-brand-200/60 px-1.5 py-0.2 rounded truncate max-w-[140px]"
-                      title={p.name}
-                    >
-                      {p.name}
-                    </span>
-                  ))}
-                </div>
-              )}
+      render: emp => (
+        <div className="flex items-center gap-2.5">
+          <Avatar name={emp.name} src={emp.avatar} size="xs" status={emp.status} />
+          <div>
+            <div className="font-bold text-xs text-slate-900 hover:text-brand-600 transition-colors">
+              {emp.name}
             </div>
+            <div className="text-[11px] text-slate-400">{emp.email}</div>
           </div>
-        );
-      },
+        </div>
+      ),
     },
     {
       key: 'phone',

@@ -64,7 +64,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [settings, setSettings] = useState<AppSettings>(storage.getSettings());
   const [apiConfig, setApiConfig] = useState<ApiConfig>(storage.getApiConfig());
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
-  const [currentUserId, setCurrentUserIdState] = useState<string>(() => storage.getCurrentUserId());
+  const [currentUserId, setCurrentUserIdState] = useState<string>(() => storage.getCurrentUserId() || 'EMP-1002');
 
   const setCurrentUserId = useCallback((id: string) => {
     storage.saveCurrentUserId(id);
@@ -73,7 +73,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const currentUser = React.useMemo(() => {
     if (employees.length === 0) return undefined;
-    return employees.find(e => e.id === currentUserId) || employees[0];
+    return employees.find(e => e.id === currentUserId) || employees.find(e => e.id === 'EMP-1002') || employees[0];
   }, [employees, currentUserId]);
 
   // Initial load

@@ -161,7 +161,7 @@ export const storage = {
   },
 
   getCurrentUserId(): string {
-    return localStorage.getItem(KEYS.CURRENT_USER) || '';
+    return localStorage.getItem(KEYS.CURRENT_USER) || 'EMP-1002';
   },
 
   saveCurrentUserId(id: string): void {

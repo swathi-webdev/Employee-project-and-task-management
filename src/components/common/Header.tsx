@@ -79,12 +79,12 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const activeUser = contextCurrentUser || employees[0] || {
-    id: 'EMP-1001',
-    name: 'Abi',
-    designation: 'Associate Product Manager',
-    email: 'abi@company.com',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+  const activeUser = contextCurrentUser || employees.find(e => e.id === 'EMP-1002') || employees[0] || {
+    id: 'EMP-1002',
+    name: 'Swathi',
+    designation: 'Marketing Manager',
+    email: 'swathi@company.com',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
     status: 'Active' as const,
   };
 
