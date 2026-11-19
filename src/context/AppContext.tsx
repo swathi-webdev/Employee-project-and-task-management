@@ -157,8 +157,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const calculateProjectProgress = useCallback((projectId: string): number => {
     const projTasks = tasks.filter(t => t.projectId === projectId);
     if (projTasks.length === 0) return 0;
-    const completed = projTasks.filter(t => t.status === 'Completed').length;
-    return Math.round((completed / projTasks.length) * 100);
+    let totalScore = 0;
+    projTasks.forEach(t => {
+      if (t.status === 'Completed') {
+        totalScore += 100;
+      } else if (t.status === 'Review') {
+        totalScore += 75;
+      } else if (t.status === 'In Progress') {
+        if (t.subtasks && t.subtasks.length > 0) {
+          const done = t.subtasks.filter(s => s.completed).length;
+          totalScore += Math.max(30, Math.round((done / t.subtasks.length) * 100));
+        } else {
+          totalScore += 50;
+        }
+      } else {
+        // To Do
+        if (t.subtasks && t.subtasks.length > 0) {
+          const done = t.subtasks.filter(s => s.completed).length;
+          totalScore += Math.round((done / t.subtasks.length) * 100);
+        }
+      }
+    });
+    return Math.min(100, Math.round(totalScore / projTasks.length));
   }, [tasks]);
 
   const getEmployeeProjects = useCallback((employeeId: string) => {

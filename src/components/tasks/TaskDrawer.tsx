@@ -56,7 +56,6 @@ export const TaskDrawer: React.FC<TaskDrawerProps> = ({
   const [editedTask, setEditedTask] = useState<Partial<Task>>({});
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const [newSubtaskMandatory, setNewSubtaskMandatory] = useState(false);
-  const [newCommentText, setNewCommentText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -69,7 +68,6 @@ export const TaskDrawer: React.FC<TaskDrawerProps> = ({
       setEditedTask({ ...task });
       setIsEditing(false);
       setErrorMessage('');
-      setNewCommentText('');
       setNewSubtaskTitle('');
     }
   }, [task]);
@@ -182,14 +180,6 @@ export const TaskDrawer: React.FC<TaskDrawerProps> = ({
 
   const handleSubtaskCheckbox = async (subtaskId: string) => {
     await toggleSubtask(task.id, subtaskId);
-  };
-
-  // Comment handler
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCommentText.trim()) return;
-    await addCommentToTask(task.id, newCommentText);
-    setNewCommentText('');
   };
 
   return (
@@ -545,57 +535,6 @@ export const TaskDrawer: React.FC<TaskDrawerProps> = ({
                     Add
                   </button>
                 </div>
-              </div>
-
-              {/* Comments Section */}
-              <div className="border-t border-slate-100 pt-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <MessageSquare className="w-4 h-4 text-brand-600" />
-                  <h3 className="text-sm font-bold text-slate-900">
-                    Discussion ({task.comments.length})
-                  </h3>
-                </div>
-
-                <div className="space-y-3 mb-4 max-h-56 overflow-y-auto">
-                  {task.comments.map(c => (
-                    <div key={c.id} className="flex gap-2.5 text-xs">
-                      <Avatar name={c.authorName} src={c.authorAvatar} size="xs" />
-                      <div className="flex-1 bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-bold text-slate-800">{c.authorName}</span>
-                          <span className="text-[10px] text-slate-400">
-                            {formatDateTime(c.createdAt)}
-                          </span>
-                        </div>
-                        <p className="text-slate-600 leading-relaxed">{c.content}</p>
-                      </div>
-                    </div>
-                  ))}
-
-                  {task.comments.length === 0 && (
-                    <p className="text-xs text-slate-400 italic">
-                      No comments yet. Start the conversation!
-                    </p>
-                  )}
-                </div>
-
-                <form onSubmit={handleAddComment} className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Write a comment..."
-                    value={newCommentText}
-                    onChange={e => setNewCommentText(e.target.value)}
-                    className="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!newCommentText.trim()}
-                    className="px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg disabled:opacity-40 transition-colors flex items-center gap-1"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Post</span>
-                  </button>
-                </form>
               </div>
 
               {/* Activity Log */}

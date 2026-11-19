@@ -66,45 +66,73 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         {task.title}
       </h4>
 
-      {/* Subtasks Progress Bar (if subtasks exist) */}
-      {totalSubtasks > 0 && (
-        <div className="mb-2.5">
-          <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium mb-1">
-            <span className="flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3 text-slate-400" />
-              Subtasks
-            </span>
-            <span className="font-semibold text-slate-700">
-              {completedSubtasks}/{totalSubtasks}
-            </span>
-          </div>
-          <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-300 ${
-                completedSubtasks === totalSubtasks ? 'bg-emerald-500' : 'bg-brand-500'
-              }`}
-              style={{ width: `${(completedSubtasks / totalSubtasks) * 100}%` }}
-            />
-          </div>
+      {/* Task Progress Bar (moves based on subtasks or status) */}
+      <div className="mb-2.5">
+        <div className="flex items-center justify-between text-[10px] text-slate-400 font-medium mb-1">
+          <span className="flex items-center gap-1">
+            <CheckCircle2 className="w-3 h-3 text-slate-400" />
+            {totalSubtasks > 0 ? 'Subtasks' : 'Progress'}
+          </span>
+          <span className="font-semibold text-slate-700">
+            {totalSubtasks > 0
+              ? `${completedSubtasks}/${totalSubtasks}`
+              : task.status === 'Completed'
+              ? '100%'
+              : task.status === 'Review'
+              ? '75%'
+              : task.status === 'In Progress'
+              ? '50%'
+              : '0%'}
+          </span>
         </div>
-      )}
+        <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-300 ${
+              task.status === 'Completed' || (totalSubtasks > 0 && completedSubtasks === totalSubtasks)
+                ? 'bg-emerald-500'
+                : task.status === 'Review'
+                ? 'bg-indigo-500'
+                : task.status === 'In Progress'
+                ? 'bg-brand-500'
+                : 'bg-slate-300'
+            }`}
+            style={{
+              width:
+                totalSubtasks > 0
+                  ? `${Math.round((completedSubtasks / totalSubtasks) * 100)}%`
+                  : task.status === 'Completed'
+                  ? '100%'
+                  : task.status === 'Review'
+                  ? '75%'
+                  : task.status === 'In Progress'
+                  ? '50%'
+                  : '5%',
+            }}
+          />
+        </div>
+      </div>
 
-      {/* Bottom: Assignee, Due date, Comments */}
+      {/* Bottom: Assignee Profile with Name & Due date */}
       <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
           {assignee ? (
-            <Avatar
-              name={assignee.name}
-              src={assignee.avatar}
-              size="xs"
-              status={assignee.status}
-            />
+            <>
+              <Avatar
+                name={assignee.name}
+                src={assignee.avatar}
+                size="xs"
+                status={assignee.status}
+              />
+              <span className="text-[11px] font-semibold text-slate-700 truncate max-w-[85px]" title={assignee.name}>
+                {assignee.name}
+              </span>
+            </>
           ) : (
             <span className="text-[10px] text-slate-400 italic">Unassigned</span>
           )}
 
           <div
-            className={`flex items-center gap-1 text-[11px] font-medium ${
+            className={`flex items-center gap-1 text-[11px] font-medium shrink-0 ml-1 ${
               overdue ? 'text-rose-600 font-semibold' : 'text-slate-500'
             }`}
           >
@@ -118,12 +146,6 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             <span className="flex items-center gap-0.5" title="Estimated hours">
               <Clock className="w-3 h-3" />
               {task.estimatedHours}h
-            </span>
-          )}
-          {task.comments.length > 0 && (
-            <span className="flex items-center gap-0.5" title="Comments">
-              <MessageSquare className="w-3 h-3" />
-              {task.comments.length}
             </span>
           )}
         </div>
