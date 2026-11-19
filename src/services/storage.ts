@@ -2,11 +2,11 @@ import { Employee, Project, Task } from '../types';
 import { INITIAL_EMPLOYEES, INITIAL_PROJECTS, INITIAL_TASKS } from '../data/mockData';
 
 const KEYS = {
-  EMPLOYEES: 'ems_employees_v8',
-  PROJECTS: 'ems_projects_v8',
-  TASKS: 'ems_tasks_v8',
-  SETTINGS: 'ems_settings_v8',
-  API_CONFIG: 'ems_api_config_v8',
+  EMPLOYEES: 'ems_employees_master',
+  PROJECTS: 'ems_projects_master',
+  TASKS: 'ems_tasks_master',
+  SETTINGS: 'ems_settings_master',
+  API_CONFIG: 'ems_api_config_master',
   CURRENT_USER: 'ems_current_user_id',
 };
 
@@ -17,7 +17,7 @@ export interface ApiConfig {
 }
 
 export const DEFAULT_API_CONFIG: ApiConfig = {
-  latencyMs: 350,
+  latencyMs: 30,
   failureRate: 0,
   simulateFailures: false,
 };
@@ -39,12 +39,22 @@ export const DEFAULT_SETTINGS: AppSettings = {
 export const storage = {
   getEmployees(): Employee[] {
     try {
-      const stored = localStorage.getItem(KEYS.EMPLOYEES);
+      const stored =
+        localStorage.getItem(KEYS.EMPLOYEES) ||
+        localStorage.getItem('ems_employees_v8') ||
+        localStorage.getItem('ems_employees_v7') ||
+        localStorage.getItem('ems_employees');
+
       if (!stored) {
         localStorage.setItem(KEYS.EMPLOYEES, JSON.stringify(INITIAL_EMPLOYEES));
         return INITIAL_EMPLOYEES;
       }
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        localStorage.setItem(KEYS.EMPLOYEES, JSON.stringify(parsed));
+        return parsed;
+      }
+      return INITIAL_EMPLOYEES;
     } catch (e) {
       console.error('Failed to load employees from localStorage', e);
       return INITIAL_EMPLOYEES;
@@ -52,7 +62,9 @@ export const storage = {
   },
 
   saveEmployees(employees: Employee[]): void {
-    localStorage.setItem(KEYS.EMPLOYEES, JSON.stringify(employees));
+    const json = JSON.stringify(employees);
+    localStorage.setItem(KEYS.EMPLOYEES, json);
+    localStorage.setItem('ems_employees_v8', json);
   },
 
   getProjects(): Project[] {
@@ -81,12 +93,19 @@ export const storage = {
   },
 
   saveProjects(projects: Project[]): void {
-    localStorage.setItem(KEYS.PROJECTS, JSON.stringify(projects));
+    const json = JSON.stringify(projects);
+    localStorage.setItem(KEYS.PROJECTS, json);
+    localStorage.setItem('ems_projects_v8', json);
   },
 
   getTasks(): Task[] {
     try {
-      const stored = localStorage.getItem(KEYS.TASKS);
+      const stored =
+        localStorage.getItem(KEYS.TASKS) ||
+        localStorage.getItem('ems_tasks_v8') ||
+        localStorage.getItem('ems_tasks_v7') ||
+        localStorage.getItem('ems_tasks');
+
       if (!stored) {
         localStorage.setItem(KEYS.TASKS, JSON.stringify(INITIAL_TASKS));
         return INITIAL_TASKS;
@@ -99,9 +118,9 @@ export const storage = {
         if (t.projectId === 'PRJ-3') { migrated = true; return { ...t, projectId: 'PRJ-20261118-003' }; }
         return t;
       });
-      if (migrated) {
-        localStorage.setItem(KEYS.TASKS, JSON.stringify(updated));
-      }
+      const json = JSON.stringify(updated);
+      localStorage.setItem(KEYS.TASKS, json);
+      localStorage.setItem('ems_tasks_v8', json);
       return updated;
     } catch (e) {
       console.error('Failed to load tasks from localStorage', e);
@@ -110,7 +129,9 @@ export const storage = {
   },
 
   saveTasks(tasks: Task[]): void {
-    localStorage.setItem(KEYS.TASKS, JSON.stringify(tasks));
+    const json = JSON.stringify(tasks);
+    localStorage.setItem(KEYS.TASKS, json);
+    localStorage.setItem('ems_tasks_v8', json);
   },
 
   getSettings(): AppSettings {

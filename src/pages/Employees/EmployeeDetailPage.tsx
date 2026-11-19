@@ -165,6 +165,29 @@ export const EmployeeDetailPage: React.FC = () => {
                 <p className="text-xs font-medium text-slate-500 mt-0.5">
                   {employee.designation} • {employee.department}
                 </p>
+
+                {/* Assigned Projects near Profile Name */}
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 mt-2">
+                  <span className="text-[11px] font-semibold text-slate-400">Projects:</span>
+                  {assignedProjects.length > 0 ? (
+                    assignedProjects.map(p => (
+                      <Link
+                        key={p.id}
+                        to={`/projects/${p.id}`}
+                        className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-brand-50 text-brand-700 border border-brand-200/80 hover:bg-brand-100 hover:border-brand-300 transition-colors"
+                        title={p.name}
+                      >
+                        <Briefcase className="w-3 h-3 text-brand-500 shrink-0" />
+                        <span>{p.name}</span>
+                        {p.managerId === employee.id && (
+                          <span className="text-[9px] font-bold text-brand-600 bg-white px-1 rounded">Lead</span>
+                        )}
+                      </Link>
+                    ))
+                  ) : (
+                    <span className="text-[11px] text-slate-400 italic">No assigned projects</span>
+                  )}
+                </div>
               </div>
 
               <StatusBadge status={employee.status} size="md" />

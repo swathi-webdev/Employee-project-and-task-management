@@ -187,7 +187,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const createEmployee = async (data: Omit<Employee, 'createdAt' | 'updatedAt'>) => {
     try {
       const created = await api.createEmployee(data);
-      setEmployees(prev => [created, ...prev]);
+      setEmployees(prev => {
+        const next = [created, ...prev.filter(e => e.id !== created.id)];
+        storage.saveEmployees(next);
+        return next;
+      });
       toast.success(`Employee ${created.name} (${created.id}) created successfully.`);
       return created;
     } catch (err: any) {
@@ -199,7 +203,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateEmployee = async (id: string, updates: Partial<Employee>) => {
     try {
       const updated = await api.updateEmployee(id, updates);
-      setEmployees(prev => prev.map(e => (e.id === id ? updated : e)));
+      setEmployees(prev => {
+        const next = prev.map(e => (e.id === id ? updated : e));
+        storage.saveEmployees(next);
+        return next;
+      });
       toast.success(`Employee ${updated.name} updated successfully.`);
       return updated;
     } catch (err: any) {
@@ -212,7 +220,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const emp = employees.find(e => e.id === id);
       await api.deleteEmployee(id);
-      setEmployees(prev => prev.filter(e => e.id !== id));
+      setEmployees(prev => {
+        const next = prev.filter(e => e.id !== id);
+        storage.saveEmployees(next);
+        return next;
+      });
       // Refresh projects/tasks as cascade may have modified assignments
       const [updatedProjects, updatedTasks] = await Promise.all([
         api.getProjects(),
@@ -220,6 +232,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ]);
       setProjects(updatedProjects);
       setTasks(updatedTasks);
+      storage.saveProjects(updatedProjects);
+      storage.saveTasks(updatedTasks);
       toast.success(`Employee ${emp ? emp.name : id} deleted successfully.`);
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete employee');
@@ -232,9 +246,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       for (const id of ids) {
         await api.updateEmployee(id, { status });
       }
-      setEmployees(prev =>
-        prev.map(e => (ids.includes(e.id) ? { ...e, status, updatedAt: new Date().toISOString() } : e))
-      );
+      setEmployees(prev => {
+        const next = prev.map(e => (ids.includes(e.id) ? { ...e, status, updatedAt: new Date().toISOString() } : e));
+        storage.saveEmployees(next);
+        return next;
+      });
       toast.success(`Updated status of ${ids.length} employees to ${status}.`);
     } catch (err: any) {
       toast.error(err.message || 'Failed bulk status update');
@@ -247,13 +263,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       for (const id of ids) {
         await api.deleteEmployee(id);
       }
-      setEmployees(prev => prev.filter(e => !ids.includes(e.id)));
+      setEmployees(prev => {
+        const next = prev.filter(e => !ids.includes(e.id));
+        storage.saveEmployees(next);
+        return next;
+      });
       const [updatedProjects, updatedTasks] = await Promise.all([
         api.getProjects(),
         api.getTasks()
       ]);
       setProjects(updatedProjects);
       setTasks(updatedTasks);
+      storage.saveProjects(updatedProjects);
+      storage.saveTasks(updatedTasks);
       toast.success(`Deleted ${ids.length} employees.`);
     } catch (err: any) {
       toast.error(err.message || 'Failed bulk delete');
@@ -265,7 +287,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const createProject = async (data: Omit<Project, 'createdAt' | 'updatedAt'>) => {
     try {
       const created = await api.createProject(data);
-      setProjects(prev => [created, ...prev]);
+      setProjects(prev => {
+        const next = [created, ...prev.filter(p => p.id !== created.id)];
+        storage.saveProjects(next);
+        return next;
+      });
       toast.success(`Project "${created.name}" created successfully.`);
       return created;
     } catch (err: any) {
@@ -277,7 +303,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateProject = async (id: string, updates: Partial<Project>) => {
     try {
       const updated = await api.updateProject(id, updates);
-      setProjects(prev => prev.map(p => (p.id === id ? updated : p)));
+      setProjects(prev => {
+        const next = prev.map(p => (p.id === id ? updated : p));
+        storage.saveProjects(next);
+        return next;
+      });
       toast.success(`Project "${updated.name}" updated successfully.`);
       return updated;
     } catch (err: any) {
@@ -290,8 +320,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const prj = projects.find(p => p.id === id);
       await api.deleteProject(id);
-      setProjects(prev => prev.filter(p => p.id !== id));
-      setTasks(prev => prev.filter(t => t.projectId !== id));
+      setProjects(prev => {
+        const next = prev.filter(p => p.id !== id);
+        storage.saveProjects(next);
+        return next;
+      });
+      setTasks(prev => {
+        const next = prev.filter(t => t.projectId !== id);
+        storage.saveTasks(next);
+        return next;
+      });
       toast.success(`Project "${prj ? prj.name : id}" and associated tasks deleted.`);
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete project');
@@ -303,7 +341,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const createTask = async (data: Omit<Task, 'createdAt' | 'updatedAt'>) => {
     try {
       const created = await api.createTask(data);
-      setTasks(prev => [created, ...prev]);
+      setTasks(prev => {
+        const next = [created, ...prev.filter(t => t.id !== created.id)];
+        storage.saveTasks(next);
+        return next;
+      });
       toast.success(`Task "${created.title}" created successfully.`);
       return created;
     } catch (err: any) {
@@ -315,7 +357,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateTask = async (id: string, updates: Partial<Task>, expectedVersion?: number) => {
     try {
       const updated = await api.updateTask(id, updates, expectedVersion);
-      setTasks(prev => prev.map(t => (t.id === id ? updated : t)));
+      setTasks(prev => {
+        const next = prev.map(t => (t.id === id ? updated : t));
+        storage.saveTasks(next);
+        return next;
+      });
       toast.success(`Task "${updated.title}" updated.`);
       return updated;
     } catch (err: any) {
@@ -328,7 +374,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     try {
       const task = tasks.find(t => t.id === id);
       await api.deleteTask(id);
-      setTasks(prev => prev.filter(t => t.id !== id));
+      setTasks(prev => {
+        const next = prev.filter(t => t.id !== id);
+        storage.saveTasks(next);
+        return next;
+      });
       toast.success(`Task "${task ? task.title : id}" deleted.`);
     } catch (err: any) {
       toast.error(err.message || 'Failed to delete task');
@@ -357,8 +407,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const now = new Date().toISOString();
     const actorName = 'Administrator';
 
-    setTasks(prev =>
-      prev.map(t =>
+    setTasks(prev => {
+      const next = prev.map(t =>
         t.id === taskId
           ? {
               ...t,
@@ -375,8 +425,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               ],
             }
           : t
-      )
-    );
+      );
+      storage.saveTasks(next);
+      return next;
+    });
 
     // 2. Perform background simulated API update
     try {
@@ -396,7 +448,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (err: any) {
       // 3. Rollback to confirmed previous state on failure!
       console.warn('Kanban move failed, rolling back:', err);
-      setTasks(prev => prev.map(t => (t.id === taskId ? originalTask : t)));
+      setTasks(prev => {
+        const next = prev.map(t => (t.id === taskId ? originalTask : t));
+        storage.saveTasks(next);
+        return next;
+      });
       toast.error(
         `Failed to update task status: ${err.message || 'Network error'}. Reverted to ${previousStatus}.`,
         'Update Reverted'
@@ -428,11 +484,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const task = tasks.find(t => t.id === taskId);
     if (!task || !content.trim()) return;
 
+    const authorName = currentUser?.name || 'Abi';
+    const authorAvatar = currentUser?.avatar || '';
+
     const newComment = {
       id: `comm-${Date.now()}`,
-      authorId: 'ADMIN',
-      authorName: 'Administrator',
-      authorAvatar: '',
+      authorId: currentUser?.id || 'EMP-1001',
+      authorName,
+      authorAvatar,
       content: content.trim(),
       createdAt: new Date().toISOString(),
     };
@@ -441,7 +500,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `act-${Date.now()}`,
       timestamp: new Date().toISOString(),
       action: 'Added a comment',
-      user: 'Administrator',
+      user: authorName,
     };
 
     await updateTask(taskId, {

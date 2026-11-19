@@ -27,9 +27,9 @@ export const Sidebar: React.FC = () => {
     resetWidth
   } = useSidebar();
 
-  const activeEmployeesCount = employees.filter(e => e.status === 'Active').length;
-  const activeProjectsCount = projects.filter(p => p.status === 'In Progress').length;
-  const openTasksCount = tasks.filter(t => t.status !== 'Completed').length;
+  const totalEmployeesCount = employees.length;
+  const totalProjectsCount = projects.length;
+  const totalTasksCount = tasks.length;
 
   const navItems = [
     {
@@ -41,19 +41,19 @@ export const Sidebar: React.FC = () => {
       label: 'Employees',
       path: '/employees',
       icon: Users,
-      badge: activeEmployeesCount,
+      badge: totalEmployeesCount,
     },
     {
       label: 'Projects',
       path: '/projects',
       icon: Briefcase,
-      badge: activeProjectsCount,
+      badge: totalProjectsCount,
     },
     {
       label: 'Tasks',
       path: '/tasks',
       icon: CheckSquare,
-      badge: openTasksCount,
+      badge: totalTasksCount,
     },
   ];
 

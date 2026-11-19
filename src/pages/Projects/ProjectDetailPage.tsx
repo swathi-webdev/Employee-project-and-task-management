@@ -144,7 +144,21 @@ export const ProjectDetailPage: React.FC = () => {
 
           <div className="flex items-center gap-2 self-start sm:self-center">
             <PriorityBadge priority={project.priority} />
-            <StatusBadge status={project.status} size="md" />
+            <div className="relative inline-flex items-center" title="Click to track & change project status">
+              <select
+                value={project.status}
+                onChange={async e => {
+                  await updateProject(project.id, { status: e.target.value as any });
+                }}
+                className="text-xs font-semibold rounded-xl px-2.5 py-1.5 border border-slate-200 bg-white text-slate-800 shadow-2xs hover:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 cursor-pointer"
+              >
+                <option value="Planning">Planning</option>
+                <option value="In Progress">In Progress</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
           </div>
         </div>
 

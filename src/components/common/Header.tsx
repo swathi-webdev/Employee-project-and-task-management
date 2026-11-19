@@ -465,6 +465,36 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
                   View My Profile
                 </button>
               </div>
+
+              {/* Active User Assigned Projects */}
+              {(() => {
+                const userProjects = projects.filter(
+                  p => p.employeeIds.includes(activeUser.id) || p.managerId === activeUser.id
+                );
+                if (userProjects.length === 0) return null;
+                return (
+                  <div className="px-3 py-2 border-t border-slate-100">
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                      Assigned Projects
+                    </div>
+                    <div className="space-y-1">
+                      {userProjects.map(p => (
+                        <button
+                          key={p.id}
+                          onClick={() => {
+                            navigate(`/projects/${p.id}`);
+                            setShowUserMenu(false);
+                          }}
+                          className="w-full text-left text-[11px] font-medium text-slate-700 hover:text-brand-600 truncate flex items-center gap-1.5 py-0.5"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-brand-500 shrink-0" />
+                          <span className="truncate">{p.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           )}
         </div>
