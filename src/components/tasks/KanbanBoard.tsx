@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   DndContext,
   DragOverlay,
   useDroppable,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -48,12 +49,13 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
   return (
     <div
       ref={setNodeRef}
-      className={`flex flex-col flex-1 min-w-[280px] sm:min-w-[300px] bg-slate-100/70 rounded-2xl border border-slate-200/80 border-t-4 ${getHeaderColor()} p-3 transition-colors ${
+      id={`kanban-col-${status.toLowerCase().replace(/\s+/g, '-')}`}
+      className={`flex flex-col w-[85vw] max-w-[340px] sm:w-auto sm:min-w-[260px] lg:min-w-[240px] xl:min-w-[280px] shrink-0 sm:shrink sm:flex-1 snap-center snap-always bg-slate-100/70 rounded-2xl border border-slate-200/80 border-t-4 ${getHeaderColor()} p-3 transition-colors ${
         isOver ? 'bg-brand-50/60 ring-2 ring-brand-300' : ''
       }`}
     >
       {/* Column Header */}
-      <div className="flex items-center justify-between px-2 py-1.5 mb-3">
+      <div className="flex items-center justify-between px-2 py-1.5 mb-2.5">
         <div className="flex items-center gap-2">
           <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
             {status}
@@ -64,6 +66,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({
         </div>
 
         <button
+          type="button"
           onClick={() => onAddTask(status)}
           className="p-1 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-white transition-colors"
           title={`Add task to ${status}`}
@@ -101,16 +104,33 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 }) => {
   const { optimisticMoveTaskStatus } = useApp();
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [selectedMobileCol, setSelectedMobileCol] = useState<TaskStatus | 'All'>('All');
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5, // 5px movement required before drag begins
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 6,
       },
     })
   );
 
   const columns: TaskStatus[] = ['To Do', 'In Progress', 'Review', 'Completed'];
+
+  const scrollToColumn = (status: TaskStatus) => {
+    setSelectedMobileCol(status);
+    const colId = `kanban-col-${status.toLowerCase().replace(/\s+/g, '-')}`;
+    const el = document.getElementById(colId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+    }
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
     const task = tasks.find(t => t.id === event.active.id);
@@ -137,28 +157,62 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="flex gap-4 overflow-x-auto pb-4 pt-1 items-start">
-        {columns.map(colStatus => (
-          <KanbanColumn
-            key={colStatus}
-            status={colStatus}
-            tasks={tasks.filter(t => t.status === colStatus)}
-            onTaskClick={onTaskClick}
-            onAddTask={onAddTask}
-          />
-        ))}
+    <div className="space-y-3">
+      {/* Mobile Column Quick Switcher Pills */}
+      <div className="flex sm:hidden items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
+        {columns.map(status => {
+          const count = tasks.filter(t => t.status === status).length;
+          const isSelected = selectedMobileCol === status;
+          return (
+            <button
+              key={status}
+              type="button"
+              onClick={() => scrollToColumn(status)}
+              className={`px-3 py-1.5 rounded-full font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 border shadow-3xs ${
+                isSelected
+                  ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              <span>{status}</span>
+              <span
+                className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                  isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                }`}
+              >
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
-      <DragOverlay>
-        {activeTask ? (
-          <TaskCard task={activeTask} onClick={() => {}} isDraggingOverlay />
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory overscroll-x-contain pb-4 pt-1 items-start touch-pan-x"
+        >
+          {columns.map(colStatus => (
+            <KanbanColumn
+              key={colStatus}
+              status={colStatus}
+              tasks={tasks.filter(t => t.status === colStatus)}
+              onTaskClick={onTaskClick}
+              onAddTask={onAddTask}
+            />
+          ))}
+        </div>
+
+        <DragOverlay>
+          {activeTask ? (
+            <TaskCard task={activeTask} onClick={() => {}} isDraggingOverlay />
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    </div>
   );
 };

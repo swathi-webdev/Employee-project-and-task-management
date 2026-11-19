@@ -104,6 +104,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ tasks, onTaskClick }
           </div>
 
           <button
+            type="button"
             onClick={goToToday}
             className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
           >
@@ -111,6 +112,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ tasks, onTaskClick }
           </button>
           <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-white">
             <button
+              type="button"
               onClick={prevMonth}
               className="p-1.5 text-slate-600 hover:bg-slate-50 border-r border-slate-200 transition-colors"
               title="Previous Month"
@@ -118,6 +120,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ tasks, onTaskClick }
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
+              type="button"
               onClick={nextMonth}
               className="p-1.5 text-slate-600 hover:bg-slate-50 transition-colors"
               title="Next Month"

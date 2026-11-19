@@ -3,8 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-  body {
+  html, body {
     @apply bg-slate-50 text-slate-800 antialiased font-sans min-h-screen;
+    overscroll-behavior-y: contain;
   }
 }
 

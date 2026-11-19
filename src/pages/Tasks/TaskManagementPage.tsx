@@ -30,10 +30,12 @@ import {
   AlertCircle,
   Briefcase,
   User,
+  SlidersHorizontal,
 } from 'lucide-react';
 
 export const TaskManagementPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const {
     tasks,
     projects,
@@ -300,9 +302,9 @@ export const TaskManagementPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-5">
       {/* Top Header Card */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
         <div>
           <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
             Task & Sprint Management
@@ -312,10 +314,11 @@ export const TaskManagementPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
           {/* View Mode Toggle: Kanban, Table, Calendar */}
           <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200">
             <button
+              type="button"
               onClick={() => setViewMode('kanban')}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 viewMode === 'kanban'
@@ -327,6 +330,7 @@ export const TaskManagementPage: React.FC = () => {
               <span>Kanban</span>
             </button>
             <button
+              type="button"
               onClick={() => setViewMode('table')}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 viewMode === 'table'
@@ -338,6 +342,7 @@ export const TaskManagementPage: React.FC = () => {
               <span>Table</span>
             </button>
             <button
+              type="button"
               onClick={() => setViewMode('calendar')}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 viewMode === 'calendar'
@@ -351,8 +356,9 @@ export const TaskManagementPage: React.FC = () => {
           </div>
 
           <button
+            type="button"
             onClick={handleExport}
-            className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5 shadow-2xs"
+            className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors flex items-center gap-1.5 shadow-2xs"
             title="Export to CSV"
           >
             <Download className="w-3.5 h-3.5" />
@@ -360,12 +366,13 @@ export const TaskManagementPage: React.FC = () => {
           </button>
 
           <button
+            type="button"
             onClick={() => {
               setEditingTask(null);
               setNewTaskInitialStatus('To Do');
               setIsFormModalOpen(true);
             }}
-            className="px-4 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-brand-500/20"
+            className="px-3.5 py-1.5 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-xs transition-colors flex items-center gap-1.5 focus:ring-2 focus:ring-brand-500/20"
           >
             <Plus className="w-4 h-4" />
             <span>Create Task</span>
@@ -374,14 +381,41 @@ export const TaskManagementPage: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-          <SearchBar
-            value={search}
-            onChange={val => updateFilters('search', val)}
-            placeholder="Search tasks or ID..."
-          />
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+        {/* Search Bar + Mobile Filters Toggle */}
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <SearchBar
+              value={search}
+              onChange={val => updateFilters('search', val)}
+              placeholder="Search tasks or ID..."
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowMobileFilters(prev => !prev)}
+            className={`sm:hidden px-3 py-2 text-xs font-semibold rounded-xl border transition-colors flex items-center gap-1.5 shrink-0 ${
+              showMobileFilters || (projectFilter || statusFilter || priorityFilter || assigneeFilter)
+                ? 'bg-brand-50 border-brand-200 text-brand-700'
+                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span>Filters</span>
+            {[projectFilter, statusFilter, priorityFilter, assigneeFilter].filter(Boolean).length > 0 && (
+              <span className="w-4 h-4 rounded-full bg-brand-600 text-white text-[10px] font-bold flex items-center justify-center">
+                {[projectFilter, statusFilter, priorityFilter, assigneeFilter].filter(Boolean).length}
+              </span>
+            )}
+          </button>
+        </div>
 
+        {/* Dropdowns: Collapsible on mobile, 4-col grid on sm+ */}
+        <div
+          className={`${
+            showMobileFilters ? 'grid' : 'hidden sm:grid'
+          } grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 mt-3 pt-3 border-t border-slate-100`}
+        >
           <FilterDropdown
             label="Project"
             value={projectFilter}
@@ -421,6 +455,7 @@ export const TaskManagementPage: React.FC = () => {
               <span className="inline-flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded-full text-slate-700">
                 Search: "{search}"
                 <button
+                  type="button"
                   onClick={() => updateFilters('search', '')}
                   className="hover:text-rose-500 font-bold ml-0.5"
                 >
@@ -432,6 +467,7 @@ export const TaskManagementPage: React.FC = () => {
               <span className="inline-flex items-center gap-1 bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full font-medium">
                 Project: {projects.find(p => p.id === projectFilter)?.name || projectFilter}
                 <button
+                  type="button"
                   onClick={() => updateFilters('project', '')}
                   className="hover:text-rose-500 font-bold ml-0.5"
                 >
@@ -443,6 +479,7 @@ export const TaskManagementPage: React.FC = () => {
               <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-medium">
                 Status: {statusFilter}
                 <button
+                  type="button"
                   onClick={() => updateFilters('status', '')}
                   className="hover:text-rose-500 font-bold ml-0.5"
                 >
@@ -454,6 +491,7 @@ export const TaskManagementPage: React.FC = () => {
               <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full font-medium">
                 Priority: {priorityFilter}
                 <button
+                  type="button"
                   onClick={() => updateFilters('priority', '')}
                   className="hover:text-rose-500 font-bold ml-0.5"
                 >
@@ -465,6 +503,7 @@ export const TaskManagementPage: React.FC = () => {
               <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-medium">
                 Assignee: {employees.find(e => e.id === assigneeFilter)?.name || assigneeFilter}
                 <button
+                  type="button"
                   onClick={() => updateFilters('assignee', '')}
                   className="hover:text-rose-500 font-bold ml-0.5"
                 >
@@ -473,6 +512,7 @@ export const TaskManagementPage: React.FC = () => {
               </span>
             )}
             <button
+              type="button"
               onClick={() => setSearchParams({})}
               className="text-brand-600 hover:text-brand-800 font-semibold underline text-[11px] ml-1"
             >
