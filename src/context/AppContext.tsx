@@ -57,12 +57,12 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { toast } = useToast();
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [settings, setSettings] = useState<AppSettings>(storage.getSettings());
-  const [apiConfig, setApiConfig] = useState<ApiConfig>(storage.getApiConfig());
+  const [employees, setEmployees] = useState<Employee[]>(() => storage.getEmployees());
+  const [projects, setProjects] = useState<Project[]>(() => storage.getProjects());
+  const [tasks, setTasks] = useState<Task[]>(() => storage.getTasks());
+  const [loading, setLoading] = useState<boolean>(false);
+  const [settings, setSettings] = useState<AppSettings>(() => storage.getSettings());
+  const [apiConfig, setApiConfig] = useState<ApiConfig>(() => storage.getApiConfig());
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [currentUserId, setCurrentUserIdState] = useState<string>(() => storage.getCurrentUserId() || 'EMP-1002');
 
@@ -77,9 +77,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [employees, currentUserId]);
 
   // Initial load
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (showFullLoader = false) => {
     try {
-      setLoading(true);
+      if (showFullLoader) {
+        setLoading(true);
+      }
       const [empList, prjList, tskList] = await Promise.all([
         api.getEmployees(),
         api.getProjects(),
@@ -93,13 +95,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } catch (err: any) {
       toast.error(err.message || 'Failed to load initial data');
     } finally {
-      setLoading(false);
+      if (showFullLoader) {
+        setLoading(false);
+      }
     }
   }, [toast]);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    loadData(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Compute live notifications based on overdue tasks & upcoming deadlines
   useEffect(() => {
@@ -544,12 +549,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const resetToDefaultData = async () => {
     storage.resetAll();
-    await loadData();
+    await loadData(false);
     toast.success('All data has been reset to default mock seed data.');
   };
 
   const refreshAll = async () => {
-    await loadData();
+    await loadData(false);
     toast.info('Data refreshed.');
   };
 
